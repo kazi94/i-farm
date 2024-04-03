@@ -39,7 +39,6 @@ class Farmer extends Model
         'commune_id',
         'daira_id',
         'wilaya_id',
-        'farm_id',
         'created_by',
         'updated_by',
     ];
@@ -56,7 +55,6 @@ class Farmer extends Model
         'commune_id' => 'integer',
         'daira_id' => 'integer',
         'wilaya_id' => 'integer',
-        'farm_id' => 'integer',
         'created_by' => 'integer',
         'updated_by' => 'integer',
         'created_at' => 'timestamp',
@@ -84,10 +82,6 @@ class Farmer extends Model
         return $this->belongsTo(Daira::class);
     }
 
-    public function farm(): BelongsTo
-    {
-        return $this->belongsTo(Farm::class);
-    }
 
     public function createdBy(): BelongsTo
     {
@@ -97,5 +91,29 @@ class Farmer extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getActivityAttribute($value)
+    {
+        if ($value == 'culture') {
+            return 'Culture';
+        }
+        if ($value == 'culture_livestock') {
+            return 'Culture et Chaptel';
+        }
+    }
+
+    public function getStatusAttribute($value)
+    {
+        if ($value == 'gold') {
+            return 'Or';
+        }
+        if ($value == 'silver') {
+            return 'Argent';
+        }
+
+        if ($value == 'bronze') {
+            return 'Bronze';
+        }
     }
 }

@@ -34,7 +34,6 @@ return new class extends Migration {
             $table->foreignId('commune_id')->constrained();
             $table->foreignId('daira_id')->constrained();
             $table->foreignId('wilaya_id')->constrained();
-            $table->foreignId('farm_id')->constrained();
             $table->foreignId('created_by')->nullable()->constrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamp('deleted_at')->nullable();

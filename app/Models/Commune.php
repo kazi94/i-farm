@@ -38,8 +38,4 @@ class Commune extends Model
         return $this->belongsTo(Daira::class);
     }
 
-    public function daira(): BelongsTo
-    {
-        return $this->belongsTo(Daira::class);
-    }
 }

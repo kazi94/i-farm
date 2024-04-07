@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Filament\Support\Assets\Js;
 use Illuminate\Support\ServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
+        FilamentAsset::register([
+            // Js::make('load-map', __DIR__ . '/../../resources/js/load-map.js'),
+        ]);
     }
 }

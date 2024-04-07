@@ -24,7 +24,7 @@ class CommuneFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'name_ar' => $this->faker->regexify('[A-Za-z0-9]{200}'),
-            'daira_id:' => Daira::factory()->create()->id:,
+            'daira_id:' => Daira::factory()->create()->id,
             'daira_id' => Daira::factory(),
         ];
     }

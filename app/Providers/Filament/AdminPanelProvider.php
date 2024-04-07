@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->unsavedChangesAlerts()
-            ->font('Poppins');
+            ->font('Poppins')
+            ->sidebarCollapsibleOnDesktop();
     }
 }

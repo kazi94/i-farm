@@ -6,10 +6,11 @@
 >
 
     <div
-        x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }"
+        x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} }"
         x-init="await createMap"
+        wire:ignore
     >
-        <div wire:ignore id="map" style="height: 360px;"></div>
+        <div id="map" style="height: 360px;"></div>
 
     </div>
 
@@ -18,8 +19,9 @@
 
 
 <script>
-async function createMap() {
-        const map = L.map('map').setView([51.505, -0.09], 13);
+ async function createMap() {
+
+        const map = L.map('map').setView([34.87461822652609, -1.3095474251895214], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -27,19 +29,21 @@ async function createMap() {
         }).addTo(map);
 
 
-
-    function onMapClick(e) {
-        console.log(e.latlng);
+    let marker = L.marker();
+    const onMapClick = (e) => {
+        marker.remove();
 
         const lat = e.latlng.lat;
         const long = e.latlng.lng;
 
         this.state = {
-            latitude: lat,
-            longitude: long
+            'latitude': lat,
+            'longitude': long
         };
-
-         const marker = L.marker(e.latlng).addTo(map);
+        console.log(this.state);
+        marker = L.marker(e.latlng);
+        marker.addTo(map);
+         //marker.remove();
     }
 
     map.on('click', onMapClick);

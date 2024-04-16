@@ -37,6 +37,7 @@ class FarmerResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Agriculteurs';
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static bool $shouldSkipAuthorization = true;
 
     public static function form(Form $form): Form
     {
@@ -62,18 +63,24 @@ class FarmerResource extends Resource
                                     ->label('Wilaya')
                                     ->options(fn(Get $get) => Wilaya::pluck('name', 'id'))
                                     ->required()
+                                    ->searchable()
+                                    ->preload()
                                     ->live(),
                                 Forms\Components\Select::make('daira_id')
                                     ->label('Daira')
                                     ->hidden(fn(Get $get) => !$get('wilaya_id'))
                                     ->options(fn(Get $get) => Daira::where('wilaya_id', $get('wilaya_id'))->pluck('name', 'id'))
                                     ->required()
+                                    ->searchable()
+                                    ->preload()
                                     ->live(),
                                 Forms\Components\Select::make('commune_id')
                                     ->label('Commune')
                                     ->hidden(fn(Get $get) => $get('daira_id') == null)
                                     ->options(fn(Get $get) => Commune::where('daira_id', $get('daira_id'))->pluck('name', 'id'))
-                                    ->required(),
+                                    ->required()
+                                    ->preload()
+                                    ->searchable(),
                                 Forms\Components\TextInput::make('phone1')
                                     ->tel()
                                     ->label('Portable 1')
@@ -158,8 +165,18 @@ class FarmerResource extends Resource
                     ]),
                 Section::make('Localisation')
                     ->schema([
+                        TextInput::make('latitude')->hidden()
+                        ->afterStateUpdated(function (Set $set, $state) {
+                                $set('location', $state['latitude']);
+                            }),
+                        TextInput::make('longitude')
+                        ->hidden()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $set('location', $state['longitude']);
+                            }),
                         LocalisationMap::make('location')
-                            ->afterStateUpdated(function (Set $set, ?array $state) {
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
                                 $set('latitude', $state['latitude']);
                                 $set('longitude', $state['longitude']);
                             }),

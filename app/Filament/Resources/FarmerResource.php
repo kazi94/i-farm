@@ -165,21 +165,26 @@ class FarmerResource extends Resource
                     ]),
                 Section::make('Localisation')
                     ->schema([
-                        TextInput::make('latitude')->hidden()
-                        ->afterStateUpdated(function (Set $set, $state) {
-                                $set('location', $state['latitude']);
-                            }),
-                        TextInput::make('longitude')
-                        ->hidden()
-                            ->afterStateUpdated(function (Set $set, $state) {
-                                $set('location', $state['longitude']);
-                            }),
+
                         LocalisationMap::make('location')
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $set('latitude', $state['latitude']);
                                 $set('longitude', $state['longitude']);
                             }),
+                        TextInput::make('latitude')
+                            ->hidden()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $set('latitude', $state['latitude']);
+                            }),
+                        TextInput::make('longitude')
+                            ->hidden()
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, $state) {
+                                $set('longitude', $state['longitude']);
+                            }),
+
 
                     ])
             ]);

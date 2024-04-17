@@ -8,6 +8,4 @@ class LocalisationMap extends Field
 {
     protected string $view = 'forms.components.localisation-map';
 
-
-
 }

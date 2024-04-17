@@ -10,6 +10,8 @@
         x-init="await createMap"
         wire:ignore
     >
+
+
         <div id="map" style="height: 360px;"></div>
 
     </div>
@@ -20,7 +22,8 @@
 
 <script>
  async function createMap() {
-
+        const latitude = @js($getRecord()->latitude ?? 0);
+        const longitude = @js($getRecord()->longitude ?? 0);
         const map = L.map('map').setView([34.87461822652609, -1.3095474251895214], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -30,6 +33,10 @@
 
 
     let marker = L.marker();
+
+    if (latitude && longitude) {
+        marker = L.marker([latitude, longitude]).addTo(map);
+    }
     const onMapClick = (e) => {
         marker.remove();
 
@@ -40,7 +47,7 @@
             'latitude': lat,
             'longitude': long
         };
-        console.log(this.state);
+
         marker = L.marker(e.latlng);
         marker.addTo(map);
          //marker.remove();

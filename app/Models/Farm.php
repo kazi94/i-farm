@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Farm extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDelete;
 
     /**
      * The attributes that are mass assignable.
@@ -20,10 +20,8 @@ class Farm extends Model
         'classification',
         'area',
         'unit',
-        'famille',
-        'setting',
-        'farm_type',
-        'farm_use',
+        'category_id',
+        'culture_setting_id',
         'farmer_id',
         'created_by',
         'updated_by',
@@ -44,6 +42,16 @@ class Farm extends Model
         'updated_at' => 'timestamp',
         'deleted_at' => 'timestamp',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+        public function setting(): BelongsTo
+    {
+        return $this->belongsTo(CultureSetting::class);
+    }
 
     public function farmer(): BelongsTo
     {

@@ -12,12 +12,14 @@ return new class extends Migration {
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('communes', function (Blueprint $table) {
+        Schema::create('farms', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 200);
-            $table->string('code', 10);
-            $table->string('name_ar', 200);
-            $table->foreignId('daira_id')->constrained();
+            $table->string('code', 50);
+            $table->integer('area')->unsigned();
+            $table->string('unit', 50);
+            $table->foreignId('category_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('culture_setting_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('farmer_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
 

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
 use Filament\Tables;
 use App\Models\Daira;
 use App\Models\Farmer;
@@ -15,8 +14,10 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
@@ -186,7 +187,33 @@ class FarmerResource extends Resource
                             }),
 
 
+                    ]),
+
+                Repeater::make('farms')
+                    ->relationship()
+                    ->schema([
+                        TextInput::make('code')
+                            ->hidden()
+                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('code', 'FARM0000' . str_pad(intval(substr($state, 5)) + 1, 5, '0', STR_PAD_LEFT)); )
+                        TextInput::make('area')
+                            ->label('Superficie')
+                            ->default(0)
+                            ->required(),
+                        Select::make('unit  ')
+                            ->options([
+                                'hectare' => 'Hectare',
+                            ])
+                            ->default('hectare')
+                            ->required(),
+                        Select::make('category_id')
+                            ->relationship('category', 'name')
+                            ->required(),
+                        Select::make('culture_setting_id')
+                            ->relationship('culture_setting', 'name')
+                            ->required(),
+
                     ])
+                    ->cloneable()
             ]);
     }
 

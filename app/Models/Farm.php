@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Farm extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -41,7 +41,6 @@ class Farm extends Model
         'updated_by' => 'integer',
         'created_at' => 'timestamp',
         'updated_at' => 'timestamp',
-        'deleted_at' => 'timestamp',
     ];
 
     public function category(): BelongsTo

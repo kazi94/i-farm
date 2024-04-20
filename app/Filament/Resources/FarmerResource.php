@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use Tabs\Tab;
 use Filament\Forms;
+use App\Models\Farm;
 use Filament\Tables;
 use App\Models\Daira;
 use App\Models\Farmer;
@@ -10,9 +12,14 @@ use App\Models\Wilaya;
 use App\Models\Commune;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists;
+use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\CultureSetting;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -25,6 +32,7 @@ use Filament\Tables\Columns\ImageColumn;
 use App\Forms\Components\LocalisationMap;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\FarmerResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -39,11 +47,17 @@ class FarmerResource extends Resource
     protected static ?string $pluralModelLabel = 'Agriculteurs';
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static bool $shouldSkipAuthorization = true;
-
+    public static function getWidgets(): array
+    {
+        return [
+            FarmerResource\Widgets\StatsOverview::class,
+        ];
+    }
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+
                 Group::make()
                     ->schema([
                         Section::make('Informations générales')
@@ -109,7 +123,8 @@ class FarmerResource extends Resource
                                         'culture_livestock' => 'Culture et Cheptel',
                                     ])
                                     ->label('Activité')
-                                    ->default('culture'),
+                                    ->default('culture')
+                                    ->native(false),
                                 Forms\Components\Select::make('status')
                                     ->required()
                                     ->options([
@@ -118,7 +133,8 @@ class FarmerResource extends Resource
                                         'bronze' => 'Bronze',
                                     ])
                                     ->label('Statut')
-                                    ->default('silver'),
+                                    ->default('bronze')
+                                    ->native(false),
                                 Forms\Components\RichEditor::make('note')
                                     ->maxLength(500)
                                     ->columnSpan(2),
@@ -152,11 +168,7 @@ class FarmerResource extends Resource
                                     ->placeholder('Lien vers le compte LinkedIn de l\'agriculteur')
                                     ->maxLength(100),
                                 Hidden::make('code')
-                                    ->default('FARM00001')
-                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('code', 'FARM0000' . str_pad(intval(substr($state, 5)) + 1, 5, '0', STR_PAD_LEFT))),
-
-
-
+                                    ->default('FARMER0000' . Farmer::count() + 1)
                             ]),
                         Section::make('Photo')
                             ->schema([
@@ -189,31 +201,6 @@ class FarmerResource extends Resource
 
                     ]),
 
-                Repeater::make('farms')
-                    ->relationship()
-                    ->schema([
-                        TextInput::make('code')
-                            ->hidden()
-                            ->afterStateUpdated(fn (Set $set, ?string $state) => $set('code', 'FARM0000' . str_pad(intval(substr($state, 5)) + 1, 5, '0', STR_PAD_LEFT)); )
-                        TextInput::make('area')
-                            ->label('Superficie')
-                            ->default(0)
-                            ->required(),
-                        Select::make('unit  ')
-                            ->options([
-                                'hectare' => 'Hectare',
-                            ])
-                            ->default('hectare')
-                            ->required(),
-                        Select::make('category_id')
-                            ->relationship('category', 'name')
-                            ->required(),
-                        Select::make('culture_setting_id')
-                            ->relationship('culture_setting', 'name')
-                            ->required(),
-
-                    ])
-                    ->cloneable()
             ]);
     }
 
@@ -305,7 +292,9 @@ class FarmerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+                // RelationManagers\PrescriptionsRelationManager::class,
+            RelationManagers\FarmsRelationManager::class,
+
         ];
     }
 
@@ -317,4 +306,17 @@ class FarmerResource extends Resource
             'edit' => Pages\EditFarmer::route('/{record}/edit'),
         ];
     }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\TextEntry::make('name'),
+                Infolists\Components\TextEntry::make('email'),
+                Infolists\Components\TextEntry::make('note')
+                    ->columnSpanFull(),
+            ]);
+    }
+
+
 }

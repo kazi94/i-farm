@@ -292,8 +292,8 @@ class FarmerResource extends Resource
     public static function getRelations(): array
     {
         return [
-                // RelationManagers\PrescriptionsRelationManager::class,
             RelationManagers\FarmsRelationManager::class,
+            RelationManagers\PreconisationsRelationManager::class,
 
         ];
     }

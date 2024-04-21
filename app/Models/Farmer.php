@@ -62,9 +62,9 @@ class Farmer extends Model
         'deleted_at' => 'timestamp',
     ];
 
-    public function prescriptions(): HasMany
+    public function preconisations(): HasMany
     {
-        return $this->hasMany(Farm::class);
+        return $this->hasMany(Preconisation::class);
     }
     public function farms(): HasMany
     {

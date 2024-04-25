@@ -69,17 +69,19 @@ class FarmResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('farmer.fullname')
-                    ->numeric()
                     ->sortable()
                     ->label('Agriculteur'),
+                Tables\Columns\TextColumn::make('farmer.address')
+                    ->sortable()
+                    ->label('Adresse'),
                 Tables\Columns\TextColumn::make('category.name')
                     ->numeric()
                     ->sortable()
-                    ->label('Catégorie'),
+                    ->label('Famille'),
                 Tables\Columns\TextColumn::make('cultureSetting.name')
                     ->numeric()
                     ->sortable()
-                    ->label('Culture'),
+                    ->label('Paramètre'),
                 Tables\Columns\TextColumn::make('area')
                     ->numeric()
                     ->sortable()
@@ -87,15 +89,6 @@ class FarmResource extends Resource
                 Tables\Columns\TextColumn::make('unit')
                     ->searchable()
                     ->label('Unite'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                ,
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

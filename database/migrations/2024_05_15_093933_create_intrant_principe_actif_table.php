@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('intrant_principe_actif', function (Blueprint $table) {
+            $table->foreignId('intrant_id');
+            $table->foreignId('principe_actif_id');
+            $table->foreignId('unit_id')->nullable();
+            $table->unsignedDecimal('concentration', 8, 2)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('intrant_principe_actif');
+    }
+};

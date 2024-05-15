@@ -17,7 +17,7 @@ class PreconisationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'preconisations';
 
-    protected static ?string $title = 'Preconisations';
+    protected static ?string $title = 'Préconisations';
 
     public function form(Form $form): Form
     {

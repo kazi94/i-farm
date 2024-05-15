@@ -43,7 +43,7 @@ class FarmsRelationManager extends RelationManager
                     ->default('hectare')
                     ->required(),
                 Select::make('category_id')
-                    ->label('Categorie')
+                    ->label('Famille')
                     ->relationship('category', 'name')
                     ->live()
                     ->required()
@@ -52,7 +52,7 @@ class FarmsRelationManager extends RelationManager
                             ->required(),
                     ]),
                 Select::make('culture_setting_id')
-                    ->label('Parametres Culture')
+                    ->label('Paramètres de Culture')
                     ->options(fn(Get $get) => CultureSetting::where('category_id', $get('category_id'))->pluck('name', 'id')->toArray())
                     ->required()
                     ->relationship('cultureSetting', 'name')
@@ -60,7 +60,7 @@ class FarmsRelationManager extends RelationManager
                         Forms\Components\TextInput::make('name')
                             ->required(),
                         Select::make('category_id')
-                            ->label('Categorie')
+                            ->label('Famille')
                             ->options(fn(Get $get) => Category::all()->pluck('name', 'id'))
                             ->required()
                     ])
@@ -78,10 +78,10 @@ class FarmsRelationManager extends RelationManager
                     ->label('Agriculteur'),
                 Tables\Columns\TextColumn::make('category.name')
                     ->sortable()
-                    ->label('Catégorie'),
+                    ->label('Famille'),
                 Tables\Columns\TextColumn::make('cultureSetting.name')
                     ->sortable()
-                    ->label('Culture'),
+                    ->label('Paramètres de culture'),
                 Tables\Columns\TextColumn::make('area')
                     ->numeric()
                     ->sortable()
@@ -89,15 +89,6 @@ class FarmsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('unit')
                     ->searchable()
                     ->label('Unite'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                ,
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

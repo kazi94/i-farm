@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Imports\ProductsImport;
 use Tabs\Tab;
 use Filament\Forms;
 use App\Models\Farm;
+use App\Models\User;
 use Filament\Tables;
 use App\Models\Daira;
 use App\Models\Farmer;
@@ -20,7 +22,9 @@ use App\Models\CultureSetting;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Group;
+use Maatwebsite\Excel\Facades\Excel;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -253,6 +257,11 @@ class FarmerResource extends Resource
                 Tables\Columns\TextColumn::make('linkedin_url')
                     ->label('LinkedIn')
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('note')
+                    ->label('Observations')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
+
 
 
                 Tables\Columns\TextColumn::make('email')
@@ -286,7 +295,22 @@ class FarmerResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])
+            ->headerActions([
+                Action::make('importer produits')
+                    ->form([
+                        FileUpload::make('product_file')
+                            ->label('Photo')
+
+                    ])
+                    ->action(function (array $data): void {
+                        ds($data['product_file']);
+
+                        Excel::import(new ProductsImport, $data['product_file']);
+
+                    })
             ]);
+        ;
     }
 
     public static function getRelations(): array

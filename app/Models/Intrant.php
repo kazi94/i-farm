@@ -22,9 +22,9 @@ class Intrant extends Model
         'formulation',
         'homologation_number',
         'firm_id',
-        'sous_category_id',
+        'intrant_sous_category_id',
         'distrubutor_id',
-        'category_id',
+        'intrant_category_id',
     ];
 
     /**
@@ -35,9 +35,9 @@ class Intrant extends Model
     protected $casts = [
         'id' => 'integer',
         'firm_id' => 'integer',
-        'sous_category_id' => 'integer',
+        'intrant_sous_category_id' => 'integer',
         'distrubutor_id' => 'integer',
-        'category_id' => 'integer',
+        'intrant_category_id' => 'integer',
     ];
 
     public function firm(): BelongsTo
@@ -62,7 +62,7 @@ class Intrant extends Model
 
     public function cultures(): BelongsToMany
     {
-        return $this->belongsToMany(Culture::class);
+        return $this->belongsToMany(Culture::class, 'intrant_culture', 'intrant_id', 'culture_id');
     }
 
     public function principeActifs(): BelongsToMany

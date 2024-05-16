@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             WilayaSeeder::class,
             DairaSeeder::class,
             CommuneSeeder::class,
-            FarmerSeeder::class,
+                // FarmerSeeder::class,
+            IntrantCategorySeeder::class,
         ]);
     }
 }

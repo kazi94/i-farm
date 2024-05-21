@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\FarmResource\Pages;
 
-use App\Filament\Resources\FarmResource;
 use Filament\Actions;
+use Filament\Support\Enums\MaxWidth;
+use App\Filament\Resources\FarmResource;
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageFarms extends ManageRecords
@@ -15,5 +16,10 @@ class ManageFarms extends ManageRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
     }
 }

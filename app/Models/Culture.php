@@ -31,4 +31,9 @@ class Culture extends Model
     {
         return $this->belongsToMany(Intrant::class, 'culture_intrant', 'culture_id', 'intrant_id');
     }
+
+    public function getNameAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
+    }
 }

@@ -4,16 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Distrubutor;
+use App\Models\Distributor;
 
-class DistrubutorFactory extends Factory
+class DistributorFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Distrubutor::class;
+    protected $model = Distributor::class;
 
     /**
      * Define the model's default state.

@@ -11,10 +11,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('culture_intrant', function (Blueprint $table) {
-            $table->foreignId('intrant_id');
-            $table->foreignId('culture_id')->nullable();
-            $table->foreignId('depredateur_id')->nullable();
-            $table->foreignId('unit_id')->nullable();
+            $table->id();
+            $table->foreignId('intrant_id')->nullable()->constrained('intrants')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('culture_id')->nullable()->constrained('cultures')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('depredateur_id')->nullable()->constrained('depredateurs')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId('unit_id')->nullable()->constrained('units')->cascadeOnUpdate()->nullOnDelete();
             $table->unsignedFloat('dose_min', 8, 2)->nullable();
             $table->unsignedFloat('dose_max', 8, 2)->nullable();
             $table->unsignedMediumInteger('dar_min')->nullable();

@@ -1,6 +1,5 @@
 <?php
-use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\IntrantsImport;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/import', function () {
-    Excel::import(new IntrantsImport, 'test.xlsx');
+Route::get('/', function () {
+    return view('welcome');
 });

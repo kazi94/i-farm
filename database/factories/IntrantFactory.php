@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Category;
-use App\Models\Distrubutor;
+use App\Models\Distributor;
 use App\Models\Firm;
 use App\Models\Intrant;
 use App\Models\SousCategory;
@@ -31,7 +31,7 @@ class IntrantFactory extends Factory
             'homologation_number' => $this->faker->regexify('[A-Za-z0-9]{30}'),
             'firm_id' => Firm::factory(),
             'sous_category_id' => SousCategory::factory(),
-            'distrubutor_id' => Distrubutor::factory(),
+            'distributor_id' => Distributor::factory(),
             'category_id' => Category::factory(),
         ];
     }

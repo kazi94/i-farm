@@ -101,12 +101,12 @@ class FarmerResource extends Resource
                                     ->preload()
                                     ->searchable(),
                                 Forms\Components\TextInput::make('phone1')
-                                    ->tel()
+                                    ->numeric()
                                     ->label('Portable 1')
                                     ->placeholder('0600000000')
                                     ->maxLength(100),
                                 Forms\Components\TextInput::make('phone2')
-                                    ->tel()
+                                    ->numeric()
                                     ->maxLength(100)
                                     ->placeholder('0600000000')
                                     ->label('Portable 2'),
@@ -190,13 +190,12 @@ class FarmerResource extends Resource
                                 $set('longitude', $state['longitude']);
                             }),
                         TextInput::make('latitude')
-                            ->hidden()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
+                                ds($state);
                                 $set('latitude', $state['latitude']);
                             }),
                         TextInput::make('longitude')
-                            ->hidden()
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $set('longitude', $state['longitude']);
@@ -297,18 +296,7 @@ class FarmerResource extends Resource
                 ]),
             ])
             ->headerActions([
-                Action::make('importer produits')
-                    ->form([
-                        FileUpload::make('product_file')
-                            ->label('Photo')
 
-                    ])
-                    ->action(function (array $data): void {
-                        ds($data['product_file']);
-
-                        Excel::import(new ProductsImport, $data['product_file']);
-
-                    })
             ]);
         ;
     }

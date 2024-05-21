@@ -20,7 +20,7 @@ class Farm extends Model
         'code',
         'classification',
         'area',
-        'unit',
+        'unit_id',
         'category_id',
         'culture_setting_id',
         'farmer_id',
@@ -66,5 +66,9 @@ class Farm extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
     }
 }

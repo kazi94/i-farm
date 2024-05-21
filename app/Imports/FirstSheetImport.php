@@ -7,16 +7,19 @@ use App\Models\Unit;
 use App\Models\Culture;
 use App\Models\Intrant;
 use App\Models\Depredateur;
-use App\Models\Distrubutor;
+use App\Models\Distributor;
 use App\Models\PrincipeActif;
 use App\Models\IntrantCategory;
 use Illuminate\Support\Collection;
 use App\Models\IntrantSousCategory;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithProgressBar;
 
-class FirstSheetImport implements ToCollection, WithHeadingRow
+class FirstSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 {
+    use Importable;
     public function collection(Collection $rows)
     {
         // intrant belongs to many sousIntrantCategory
@@ -32,20 +35,21 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
             $cultures = strtolower($row['cultures']);
             $dosesUnit = strtolower($row['doses_dutilisation']);
             $dar = $row['dar'];
-            $observation = $row['observation'];
+            $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
             $n_dhomologation = $row['n_dhomologation'];
-            $firme = strtolower($row['firmes']);
+            $firme = rtrim(strtolower($row['firmes']), '.');
             $representant = strtolower($row['representant']);
-
             // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
-            if (isset($prevIntrant->name) && $intrant != $prevIntrant->name) {
+            if (is_null($prevIntrant) || strcmp($intrant, strtolower($prevIntrant->name_fr)) !== 0) {
+
+
                 // intrant belongs to firme, check if the firm exists then return id
                 $firme = $firme ? $this->getOrCreateFirm($firme) : null;
 
                 // intrant belongs to distributeur, check if the distributeur exists then return id
                 $representant = $representant ? $this->getOrCreateDistributeur($representant) : null;
 
-                if (!$firme && !$representant)
+                if ($firme && $representant)
                     $representant->firms()->attach($firme); // representant belongs to many firms
 
                 // Get or create the intrant
@@ -69,10 +73,14 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
 
             // doses is a string seperated by '-'
             $doses = explode('-', $dosesUnit[0]);
-            $unit = $dosesUnit[1];
+            $unit = isset($dosesUnit[1]) ? $dosesUnit[1] : null;
 
             // dar is a string seperated by '-'
+
             $dar = explode('-', $dar);
+
+
+
 
             foreach ($depredateurs as $depredateur) {
 
@@ -82,16 +90,22 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
 
                     $culture = $this->getOrCreateCulture($culture); // get or create the culture
 
+                    $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
+                    $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
 
-                    $intrant->cultures()->attach(
-                        $culture,
+                    $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
+                    $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
+
+
+                    $intrant->intrantsCultures()->create(
                         [
+                            'culture_id' => $culture->id,
                             'depredateur_id' => $depredateur->id,
-                            'dose_min' => $doses[0],
-                            'dose_max' => $doses[1] ? $doses[1] : $doses[0],
+                            'dose_min' => $doseMin,
+                            'dose_max' => $doseMax,
                             'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
-                            'dar_min' => $dar[0] ? $dar[0] : null,
-                            'dar_max' => $dar[1] ? $dar[1] : ($dar[0] ? $dar[0] : null),
+                            'dar_min' => $darMin,
+                            'dar_max' => $darMax,
                             'observation' => $observation,
                         ]
                     );
@@ -114,9 +128,9 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         $dbCulture = Culture::where('name', $culture)->first();
 
         if ($dbCulture) {
-            $dbCulture = preg_replace('/[^A-Za-z0-9\-]/', '', $dbCulture->name);
+            $dbCulture->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbCulture->name);
 
-            if ($cultureUpdated == $dbCulture) { // check if the name of the culture in the database is the same as the name of the culture in the excel
+            if ($cultureUpdated == $dbCulture->name) { // check if the name of the culture in the database is the same as the name of the culture in the excel
                 return $dbCulture;
             }
         }
@@ -133,19 +147,19 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         // remove speciale character for example 'algérie' to 'algerie'
         $depredUpdated = preg_replace('/[^A-Za-z0-9\-]/', '', $depredateur);
 
-        // retrieve distrubutor from database
+        // retrieve Distributor from database
         $dbDepredateur = Depredateur::where('name', $depredateur)->first();
 
         if ($dbDepredateur) {
-            $dbDepredateur = preg_replace('/[^A-Za-z0-9\-]/', '', $dbDepredateur->name);
+            $dbDepredateur->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbDepredateur->name);
 
-            if ($depredUpdated == $dbDepredateur) { // check if the name of the distrubutor in the database is the same as the name of the distrubutor in the excel
+            if ($depredUpdated == $dbDepredateur->name) { // check if the name of the Distributor in the database is the same as the name of the Distributor in the excel
                 return $dbDepredateur;
             }
 
         }
 
-        // create distrubutor in database
+        // create Distributor in database
         return Depredateur::firstOrCreate(['name' => $depredateur], ['name' => $depredateur]);
 
     }
@@ -155,22 +169,22 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
     {
         $distributeur = strtolower(trim($distributeur));
         // remove speciale character for example 'algérie' to 'algerie'
-        $distrubutorUp = preg_replace('/[^A-Za-z0-9\-]/', '', $distributeur);
+        $DistributorUp = preg_replace('/[^A-Za-z0-9\-]/', '', $distributeur);
 
-        // retrieve distrubutor from database
-        $dbDistrubutor = Distrubutor::where('name', $distributeur)->first();
+        // retrieve Distributor from database
+        $dbDistributor = Distributor::where('name', $distributeur)->first();
 
-        if ($dbDistrubutor) {
-            $dbDistrubutor = preg_replace('/[^A-Za-z0-9\-]/', '', $dbDistrubutor->name);
+        if ($dbDistributor) {
+            $dbDistributor->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbDistributor->name);
 
-            if ($distrubutorUp == $dbDistrubutor) { // check if the name of the distrubutor in the database is the same as the name of the distrubutor in the excel
-                return $dbDistrubutor;
+            if ($DistributorUp == $dbDistributor->name) { // check if the name of the Distributor in the database is the same as the name of the Distributor in the excel
+                return $dbDistributor;
             }
 
         }
 
-        // create distrubutor in database
-        return Distrubutor::firstOrCreate(['name' => $distributeur], ['name' => $distributeur]);
+        // create Distributor in database
+        return Distributor::firstOrCreate(['name' => $distributeur], ['name' => $distributeur]);
 
 
     }
@@ -187,9 +201,9 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         $dbFirm = Firm::where('name', $firme)->first();
 
         if ($dbFirm) {
-            $dbFirm = preg_replace('/[^A-Za-z0-9\-]/', '', $dbFirm->name);
+            $dbFirm->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbFirm->name);
 
-            if ($firmeUp == $dbFirm) { // check if the name of the firme in the database is the same as the name of the firme in the excel
+            if ($firmeUp == $dbFirm->name) { // check if the name of the firme in the database is the same as the name of the firme in the excel
                 return $dbFirm;
             }
 
@@ -209,11 +223,11 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         return Intrant::firstOrCreate([
             'name_fr' => $name,
             'intrant_category_id' => $sousIntrantCateg->intrant_category_id,
-            'sous_intrant_category_id' => $sousIntrantCateg->id,
+            'intrant_sous_category_id' => $sousIntrantCateg->id,
             'formulation' => $formulation,
             'homologation_number' => $homologationNumber,
-            'firm_id' => $firm->id,
-            'distrubutor_id' => $representant->id
+            'firm_id' => $firm ? $firm->id : null,
+            'distributor_id' => $representant ? $representant->id : null
         ], ['name' => $name]);
     }
     /**
@@ -235,14 +249,18 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
             // get the unit from concentration, concentrations is a string seperated by space when the first at left is
             // the value of concentration and the second at right is the unit
             $value = explode(' ', $concentrations[$key])[0];
-            $unit = explode(' ', $concentrations[$key])[1];
+            $value = floatval(str_replace(',', '.', $value));
+
+            $unit = explode(' ', $concentrations[$key]);
+            $unit = isset($unit[1]) ? $unit[1] : null;
 
             // Check if the unit exist in unit table then create one and return id
             $unit = $this->getOrCreateUnit($unit);
 
-            $intrant->principeActifs()->attach(
-                $principeActif,
+            $intrant->intrantsPrincipesActifs()->create(
+
                 [
+                    'principe_actif_id' => $principeActif->id,
                     'concentration' => $value ? $value : null,
                     'unit_id' => $unit ? $unit->id : null
                 ]
@@ -261,9 +279,9 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         $dbPrincipe = PrincipeActif::where('name_fr', $principe)->first();
 
         if ($dbPrincipe) {
-            $dbPrincipe = preg_replace('/[^A-Za-z0-9\-]/', '', $dbPrincipe->name_fr);
+            $dbPrincipe->name_fr = preg_replace('/[^A-Za-z0-9\-]/', '', $dbPrincipe->name_fr);
 
-            if ($principeUp == $dbPrincipe) { // check if the name_fr of the principe ac in the database is the same as the name_fr of the principe ac in the excel
+            if ($principeUp == $dbPrincipe->name_fr) { // check if the name_fr of the principe ac in the database is the same as the name_fr of the principe ac in the excel
                 return $dbPrincipe;
             }
 
@@ -285,9 +303,9 @@ class FirstSheetImport implements ToCollection, WithHeadingRow
         $dbUnit = Unit::where('name', $unit)->first();
 
         if ($dbUnit) {
-            $dbUnit = preg_replace('/[^A-Za-z0-9\-]/', '', $dbUnit->name);
+            $dbUnit->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbUnit->name);
 
-            if ($unitUp == $dbUnit) { // check if the name of the unit in the database is the same as the name of the unit in the excel
+            if ($unitUp == $dbUnit->name) { // check if the name of the unit in the database is the same as the name of the unit in the excel
                 return $dbUnit;
             }
 

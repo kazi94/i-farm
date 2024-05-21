@@ -33,4 +33,9 @@ class IntrantCategory extends Model
     {
         return $this->hasMany(IntrantSousCategory::class);
     }
+
+    public function getNameAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
+    }
 }

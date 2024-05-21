@@ -35,13 +35,21 @@ class FarmsRelationManager extends RelationManager
                     ->label('Superficie')
                     ->default(0)
                     ->required(),
-                Select::make('unit')
-                    ->label('Unite')
-                    ->options([
-                        'hectare' => 'Hectare',
+                Select::make('unit_id')
+                    ->label('Unité')
+                    ->relationship('unit', 'name')
+                    ->required()
+                    ->default('ha')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Unité')
+                            ->required(),
                     ])
-                    ->default('hectare')
-                    ->required(),
+                    ->editOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Unité')
+                            ->required(),
+                    ]),
                 Select::make('category_id')
                     ->label('Famille')
                     ->relationship('category', 'name')
@@ -49,15 +57,30 @@ class FarmsRelationManager extends RelationManager
                     ->required()
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
+                            ->label('Famille')
                             ->required(),
-                    ]),
+                    ])->editOptionForm([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Famille')
+                                ->required(),
+                        ]),
                 Select::make('culture_setting_id')
                     ->label('Paramètres de Culture')
                     ->options(fn(Get $get) => CultureSetting::where('category_id', $get('category_id'))->pluck('name', 'id')->toArray())
                     ->required()
-                    ->relationship('cultureSetting', 'name')
+                    ->relationship('cultureSetting', 'name', fn(Builder $query, Get $get) => $query->where('category_id', $get('category_id')))
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
+                            ->label('Paramètres de Culture')
+                            ->required(),
+                        Select::make('category_id')
+                            ->label('Famille')
+                            ->options(fn(Get $get) => Category::all()->pluck('name', 'id'))
+                            ->required()
+                    ])
+                    ->editOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Paramètres de Culture')
                             ->required(),
                         Select::make('category_id')
                             ->label('Famille')
@@ -83,12 +106,9 @@ class FarmsRelationManager extends RelationManager
                     ->sortable()
                     ->label('Paramètres de culture'),
                 Tables\Columns\TextColumn::make('area')
-                    ->numeric()
+                    ->view('tables.columns.farm-area')
                     ->sortable()
                     ->label('Superficie'),
-                Tables\Columns\TextColumn::make('unit')
-                    ->searchable()
-                    ->label('Unite'),
             ])
             ->filters([
                 //

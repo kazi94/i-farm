@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\FarmerResource\Pages;
 
-use App\Filament\Resources\FarmerResource;
 use Filament\Actions;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\FarmerResource;
 
 class ListFarmers extends ListRecords
 {
@@ -15,5 +16,10 @@ class ListFarmers extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::Full;
     }
 }

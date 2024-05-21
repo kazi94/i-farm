@@ -35,4 +35,9 @@ class IntrantSousCategory extends Model
     {
         return $this->belongsTo(IntrantCategory::class);
     }
+
+    public function getNameAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
+    }
 }

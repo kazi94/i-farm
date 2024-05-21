@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Intrant extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +24,7 @@ class Intrant extends Model
         'homologation_number',
         'firm_id',
         'intrant_sous_category_id',
-        'distrubutor_id',
+        'distributor_id',
         'intrant_category_id',
     ];
 
@@ -36,7 +37,7 @@ class Intrant extends Model
         'id' => 'integer',
         'firm_id' => 'integer',
         'intrant_sous_category_id' => 'integer',
-        'distrubutor_id' => 'integer',
+        'distributor_id' => 'integer',
         'intrant_category_id' => 'integer',
     ];
 
@@ -47,26 +48,31 @@ class Intrant extends Model
 
     public function sousCategory(): BelongsTo
     {
-        return $this->belongsTo(IntrantSousCategory::class);
+        return $this->belongsTo(IntrantSousCategory::class, 'intrant_sous_category_id', 'id');
     }
 
-    public function distrubutor(): BelongsTo
+    public function distributor(): BelongsTo
     {
-        return $this->belongsTo(Distrubutor::class);
+        return $this->belongsTo(Distributor::class);
     }
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(IntrantCategory::class);
+        return $this->belongsTo(IntrantCategory::class, 'intrant_category_id', 'id');
     }
 
-    public function cultures(): BelongsToMany
+    public function intrantsCultures()
     {
-        return $this->belongsToMany(Culture::class, 'intrant_culture', 'intrant_id', 'culture_id');
+        return $this->hasMany(IntrantCulture::class, );
     }
 
-    public function principeActifs(): BelongsToMany
+    public function intrantsPrincipesActifs()
     {
-        return $this->belongsToMany(PrincipeActif::class);
+        return $this->hasmAny(IntrantPrincipeActif::class);
+    }
+
+    public function getNameFrAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
     }
 }

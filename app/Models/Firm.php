@@ -37,8 +37,14 @@ class Firm extends Model
         return $this->hasMany(Intrant::class);
     }
 
-    public function distrubutors(): BelongsToMany
+    public function Distributors(): BelongsToMany
     {
-        return $this->belongsToMany(Distrubutor::class);
+        return $this->belongsToMany(Distributor::class);
+    }
+
+
+    public function getNameAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
     }
 }

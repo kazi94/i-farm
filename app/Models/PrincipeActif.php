@@ -28,4 +28,9 @@ class PrincipeActif extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
+    public function getNameFrAttribute($value)
+    {
+        return strtoupper(substr($value, 0, 1)) . substr($value, 1);
+    }
 }

@@ -2,19 +2,29 @@
 
 namespace App\Imports;
 
-use App\Models\Product;
 use App\Imports\FirstSheetImport;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithProgressBar;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class IntrantsImport implements WithMultipleSheets
+class IntrantsImport implements WithMultipleSheets, WithProgressBar
 {
+
+    use Importable;
+
     public function sheets(): array
     {
         return [
             'INSECTICIDES' => new FirstSheetImport(),
+            'ACARICIDES' => new SecondSheetImport(),
+            'FONGICIDES' => new ThirdSheetImport(),
+            'HERBICIDES' => new FourthSheetImport(),
+            'LIMATICIDES' => new FifthSheetImport(),
+            'ADJUVANTS' => new SixthSheetImport(),
+            'STIMULANTS' => new SevenSheetImport(),
+            'RODENTICIDES' => new EighttSheetImport(),
+            'NEMATICIDES' => new NineSheetImport(),
+            'AUTRES' => new TenSheetImport(),
         ];
     }
 

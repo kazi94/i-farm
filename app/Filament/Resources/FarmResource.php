@@ -32,11 +32,11 @@ class FarmResource extends Resource
                 Forms\Components\Select::make('category_id')
                     ->relationship('category', 'name')
                     ->live()
-                    ->label('Catégorie'),
+                    ->label('Famille'),
                 Forms\Components\Select::make('culture_setting_id')
                     ->options(fn(Get $get) => CultureSetting::where('category_id', $get('category_id'))->pluck('name', 'id')->toArray())
                     ->relationship('cultureSetting', 'name')
-                    ->label('Culture'),
+                    ->label('Paramètres de Culture'),
                 Forms\Components\Select::make('farmer_id')
                     ->options(fn(Get $get) => Farmer::all()->pluck('fullname', 'id')->toArray())
                     ->relationship('farmer', 'fullname')
@@ -44,8 +44,7 @@ class FarmResource extends Resource
                     ->searchable()
                     ->live()
                     ->preload()
-                    ->label('Agriculteur')
-                ,
+                    ->label('Agriculteur'),
                 TextInput::make('code')
                     ->disabled()
                     ->required()
@@ -54,13 +53,13 @@ class FarmResource extends Resource
                     ->required()
                     ->numeric()
                     ->label('Superficie'),
-                Select::make('unit')
+                Select::make('unit_id')
                     ->label('Unite')
-                    ->options([
-                        'hectare' => 'Hectare',
-                    ])
-                    ->default('hectare')
-                    ->required(),
+                    ->relationship('unit', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->default('ha'),
             ]);
     }
 

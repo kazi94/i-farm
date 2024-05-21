@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->string('code', 50);
             $table->integer('area')->unsigned();
-            $table->string('unit', 50);
+            $table->foreignId('unit_id')->nullable()->constrained('units')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId('category_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId('culture_setting_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId('farmer_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();

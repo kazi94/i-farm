@@ -32,4 +32,5 @@ class Unit extends Model
     {
         return $this->belongsToMany(Intrant::class, 'culture_intrant', 'unit_id', 'intrant_id');
     }
+
 }

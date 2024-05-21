@@ -15,7 +15,6 @@
         "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.9.1",
         "laradumps/laradumps": "^3.1",
         "laravel-shift/blueprint": "^2.10",

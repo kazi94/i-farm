@@ -19,6 +19,9 @@ class IntrantCategorySeeder extends Seeder
                         'name' => 'insecticides',
                     ],
                     [
+                        'name' => 'acaricides',
+                    ],
+                    [
                         'name' => 'herbicides',
                     ],
                     [

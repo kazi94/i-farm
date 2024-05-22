@@ -2,57 +2,71 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Preconisation extends Pivot
+class Preconisation extends Model
 {
-    use SoftDeletes, HasFactory;
+    use HasFactory;
+    use SoftDeletes;
 
-    protected $table = 'preconisations';
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
+        'code',
         'date_preconisation',
+        'note',
         'farmer_id',
         'farm_id',
-        'deleted_at',
-        'created_at',
-        'updated_at',
         'created_by',
         'updated_by',
-        'note'
+        'deleted_at',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
     protected $casts = [
-        'deleted_at' => 'datetime',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'id' => 'integer',
+        'farmer_id' => 'integer',
+        'farm_id' => 'integer',
+        'created_by' => 'integer',
+        'updated_by' => 'integer',
+        'deleted_at' => 'timestamp',
     ];
 
-
-    public function farm()
+    public function preconisationItems(): HasMany
     {
-        return $this->belongsTo(Farm::class);
+        return $this->hasMany(PreconisationItems::class);
     }
 
-    public function farmer()
+    public function farmer(): BelongsTo
     {
         return $this->belongsTo(Farmer::class);
     }
 
-    public function preconisationItems()
+    public function farm(): BelongsTo
     {
-        return $this->hasMany(PreconisationItem::class);
+        return $this->belongsTo(Farm::class);
     }
 
-    public function createdBy()
+
+
+    public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class);
     }
 
-    public function updatedBy()
+    public function updatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(User::class);
     }
 }

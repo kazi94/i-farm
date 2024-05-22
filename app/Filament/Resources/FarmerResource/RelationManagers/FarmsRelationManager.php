@@ -29,7 +29,6 @@ class FarmsRelationManager extends RelationManager
             ->schema([
                 TextInput::make('code')
                     ->default('FARM0000' . Farm::count() + 1)
-
                     ->required(),
                 TextInput::make('area')
                     ->label('Superficie')
@@ -39,7 +38,6 @@ class FarmsRelationManager extends RelationManager
                     ->label('Unité')
                     ->relationship('unit', 'name')
                     ->required()
-                    ->default('ha')
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
                             ->label('Unité')
@@ -95,10 +93,10 @@ class FarmsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('farmer.fullname')
+                Tables\Columns\TextColumn::make('code')
                     ->numeric()
                     ->sortable()
-                    ->label('Agriculteur'),
+                    ->label('Code'),
                 Tables\Columns\TextColumn::make('category.name')
                     ->sortable()
                     ->label('Famille'),

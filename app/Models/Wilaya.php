@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Rennokki\QueryCache\Traits\QueryCacheable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Wilaya extends Model
 {
     use HasFactory;
+    use QueryCacheable;
 
+    public $cacheFor = 360000;
     /**
      * The attributes that are mass assignable.
      *

@@ -57,6 +57,7 @@ class FarmerResource extends Resource
             FarmerResource\Widgets\StatsOverview::class,
         ];
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -182,7 +183,6 @@ class FarmerResource extends Resource
                     ]),
                 Section::make('Localisation')
                     ->schema([
-
                         LocalisationMap::make('location')
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
@@ -203,7 +203,6 @@ class FarmerResource extends Resource
 
 
                     ]),
-
             ]);
     }
 

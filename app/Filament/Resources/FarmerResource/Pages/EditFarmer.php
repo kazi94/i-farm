@@ -19,7 +19,8 @@ class EditFarmer extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            $this->getSaveFormAction()
+                ->formId('form'),
         ];
     }
 
@@ -30,11 +31,18 @@ class EditFarmer extends EditRecord
 
     public function getContentTabIcon(): ?string
     {
-        return 'heroicon-m-cog';
+        return 'heroicon-m-pencil-square';
     }
 
     public function getContentTabPosition(): ?ContentTabPosition
     {
-        return ContentTabPosition::After;
+        return ContentTabPosition::Before;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['updated_by'] = auth()->id();
+
+        return $data;
     }
 }

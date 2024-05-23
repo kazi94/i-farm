@@ -23,7 +23,7 @@ class FarmResource extends Resource
     protected static ?string $model = Farm::class;
     protected static ?string $pluralModelLabel = 'Cultures';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-asia-australia';
 
     public static function form(Form $form): Form
     {
@@ -80,12 +80,12 @@ class FarmResource extends Resource
                 Tables\Columns\TextColumn::make('cultureSetting.name')
                     ->numeric()
                     ->sortable()
-                    ->label('Paramètre'),
+                    ->label('Paramètre de culture'),
                 Tables\Columns\TextColumn::make('area')
                     ->numeric()
                     ->sortable()
                     ->label('Superficie'),
-                Tables\Columns\TextColumn::make('unit')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->searchable()
                     ->label('Unite'),
             ])

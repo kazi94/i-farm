@@ -43,6 +43,8 @@ class Preconisation extends Model
         'deleted_at' => 'timestamp',
     ];
 
+    public $appends = ['total_amount'];
+
     public function preconisationItems(): HasMany
     {
         return $this->hasMany(PreconisationItems::class);
@@ -62,11 +64,37 @@ class Preconisation extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'updated_by');
     }
+
+
+    public function getTotalAmountAttribute()
+    {
+        return $this->preconisationItems()->sum('price');
+    }
+
+
+    public function scopeTotalAmount()
+    {
+        return $this->preconisationItems()->sum('price');
+    }
+
+    public function scopeAverageAmount()
+    {
+        return $this->preconisationItems()->sum('price');
+
+        // return $this->preconisationItems()->sum('price');
+    }
+
+    public function scopeLastOne()
+    {
+        return $this->orderBy('id', 'desc')->first();
+    }
+
+
 }

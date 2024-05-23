@@ -152,7 +152,7 @@ class IntrantsCulturesRelationManager extends RelationManager
                     ->sortable(),
                 Tables\Columns\TextColumn::make('observation')
                     ->label('Observation')
-                    ->columnSpan(3),
+                    ->columnSpan(3)->html(),
 
             ])
             ->filters([

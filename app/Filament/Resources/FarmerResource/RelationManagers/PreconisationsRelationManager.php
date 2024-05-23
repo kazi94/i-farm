@@ -2,16 +2,29 @@
 
 namespace App\Filament\Resources\FarmerResource\RelationManagers;
 
+use App\Actions\PrintPreconisationAction;
 use Filament\Forms;
 use App\Models\Farm;
+use App\Models\Unit;
 use Filament\Tables;
 use App\Models\Intrant;
+use Livewire\Component;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Models\Preconisation;
+use App\Livewire\RegistrationForm;
+use Filament\Actions\StaticAction;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Repeater;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -41,7 +54,7 @@ class PreconisationsRelationManager extends RelationManager
                         ->required()
                         ->label('Code')
                         ->default('PRC00' . Preconisation::max('id') + 1)
-                        ->disabled(),
+                        ->readOnly(),
                     Forms\Components\DatePicker::make('date_preconisation')
                         ->required()
                         ->label('Date de preconisation')
@@ -51,7 +64,8 @@ class PreconisationsRelationManager extends RelationManager
                     Forms\Components\Select::make('farm_id')
                         ->options(fn(RelationManager $livewire) => Farm::where('farmer_id', $livewire->getOwnerRecord()['id'])->get()->pluck('code', 'id'))
                         ->required()
-                        ->label('Culture'),
+                        ->label('Culture')
+                        ->default(1),
                 ])->columns(3),
 
                 Forms\Components\Section::make([
@@ -77,11 +91,8 @@ class PreconisationsRelationManager extends RelationManager
                             Forms\Components\Select::make('unit_id')
                                 ->required()
                                 ->label('Unite')
-                                ->options([
-                                    'kg' => 'Kg',
-                                    'litre' => 'Litre',
-                                    'unit' => 'Unite',
-                                ]),
+                                ->options(Unit::all()->pluck('name', 'id'))
+                                ->default(1),
                             Forms\Components\TextInput::make('price')
                                 ->required()
                                 ->label('Prix')
@@ -96,6 +107,12 @@ class PreconisationsRelationManager extends RelationManager
                 ]),
 
 
+                Forms\Components\Section::make([
+                    Forms\Components\RichEditor::make('note')
+                        ->label('Note'),
+
+                ])->columnSpanFull(),
+
             ]);
     }
 
@@ -104,17 +121,27 @@ class PreconisationsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('description')
             ->columns([
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('farm.code')
+                    ->label('Culture'),
+                Tables\Columns\TextColumn::make('date_preconisation')
+                    ->label('Date de preconisation')
+                    ->date('d/m/Y'),
+                Tables\Columns\TextColumn::make('note')
+                    ->label('Note')
+                    ->limit(30)->html(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->modalWidth(MaxWidth::FiveExtraLarge),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+                PrintPreconisationAction::create(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

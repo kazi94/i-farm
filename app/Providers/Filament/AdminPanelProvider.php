@@ -29,16 +29,25 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Green,
+                'secondary' => Color::Cyan,
+                'success' => Color::Green,
+                'warning' => Color::Yellow,
+                'danger' => Color::Red,
             ])
+            ->favicon(asset('images/favicon.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // \App\Filament\Pages\Dashboard::class::class,
+
+                // Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
+                \App\Filament\Resources\PreconisationResource\Widgets\StatsOverview::class,
+                \App\Filament\Resources\FarmerResource\Widgets\StatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -55,6 +64,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->font('Poppins')
-            ->sidebarCollapsibleOnDesktop();
+            ->sidebarCollapsibleOnDesktop()
+            ->spa();
     }
 }

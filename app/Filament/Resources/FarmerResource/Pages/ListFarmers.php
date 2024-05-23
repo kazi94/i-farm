@@ -22,4 +22,11 @@ class ListFarmers extends ListRecords
     {
         return MaxWidth::Full;
     }
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+    //         FarmerResource\Widgets\StatsOverview::class,
+    //     ];
+    // }
+
 }

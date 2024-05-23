@@ -51,12 +51,6 @@ class FarmerResource extends Resource
     protected static ?string $pluralModelLabel = 'Agriculteurs';
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static bool $shouldSkipAuthorization = true;
-    public static function getWidgets(): array
-    {
-        return [
-            FarmerResource\Widgets\StatsOverview::class,
-        ];
-    }
 
     public static function form(Form $form): Form
     {
@@ -194,12 +188,14 @@ class FarmerResource extends Resource
                             ->afterStateUpdated(function (Set $set, $state) {
                                 ds($state);
                                 $set('latitude', $state['latitude']);
-                            }),
+                            })
+                            ->readOnly(),
                         TextInput::make('longitude')
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 $set('longitude', $state['longitude']);
-                            }),
+                            })
+                            ->readOnly(),
 
 
                     ]),

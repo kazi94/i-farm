@@ -8,24 +8,12 @@ use App\Models\Farm;
 use App\Models\Unit;
 use Filament\Tables;
 use App\Models\Intrant;
-use Livewire\Component;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Models\Preconisation;
-use App\Livewire\RegistrationForm;
-use Filament\Actions\StaticAction;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Repeater;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PreconisationsRelationManager extends RelationManager
@@ -135,6 +123,7 @@ class PreconisationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()->modalWidth(MaxWidth::FiveExtraLarge),
+
 
             ])
             ->actions([

@@ -43,6 +43,7 @@ class Preconisation extends Model
         'deleted_at' => 'timestamp',
     ];
 
+
     public $appends = ['total_amount'];
 
     public function preconisationItems(): HasMany

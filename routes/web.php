@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/farmer/{farmer}/preconisation/{preconisation}/print', App\Http\Controllers\User\Farmer\FarmerPreconisationPrintController::class)->name('farmer.preconisation.print');
+    Route::get('/preconisation/{preconisation}/print', App\Http\Controllers\User\Preconisation\PreconisationPrintController::class)->name('preconisation.print');
+});

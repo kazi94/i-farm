@@ -43,6 +43,8 @@ class Preconisation extends Model
         'deleted_at' => 'timestamp',
     ];
 
+    public $appends = ['total_amount'];
+
     public function preconisationItems(): HasMany
     {
         return $this->hasMany(PreconisationItems::class);
@@ -69,4 +71,12 @@ class Preconisation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+
+    public function getTotalAmountAttribute()
+    {
+        return $this->preconisationItems()->sum('price');
+    }
+
+
 }

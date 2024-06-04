@@ -76,6 +76,13 @@ class IntrantResource extends Resource
                         Forms\Components\TextInput::make('homologation_number')
                             ->label('N° de homologation')
                             ->placeholder('N° de homologation'),
+                        Forms\Components\TextInput::make('score')
+                            ->label('Score')
+                            ->numeric()
+                            ->placeholder('Score')
+                            ->validationMessages([
+                                'numeric' => 'Score doit être un nombre',
+                            ]),
                         Forms\Components\Select::make('firm_id')
                             ->label('Firme')
                             ->searchable()
@@ -108,6 +115,9 @@ class IntrantResource extends Resource
                                     ->label('Représentant')
                                     ->required(),
                             ]),
+                        Forms\Components\Toggle::make('is_approved')
+                            ->label('Homologué')
+                            ->default(false),
                     ])
                     ->columns(3),
 
@@ -186,8 +196,8 @@ class IntrantResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\IntrantsCulturesRelationManager::class,
             RelationManagers\IntrantsPrincipesActifsRelationManager::class,
+            RelationManagers\IntrantsCulturesRelationManager::class,
         ];
     }
 

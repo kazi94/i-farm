@@ -23,13 +23,9 @@ class EditIntrant extends EditRecord
         return true;
     }
 
-    public function getContentTabIcon(): ?string
-    {
-        return 'heroicon-m-cog';
-    }
 
     public function getContentTabPosition(): ?ContentTabPosition
     {
-        return ContentTabPosition::After;
+        return ContentTabPosition::Before;
     }
 }

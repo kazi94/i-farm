@@ -2,18 +2,20 @@
 
 namespace App\Filament\Resources\FarmerResource\RelationManagers;
 
-use App\Actions\PrintPreconisationAction;
+use App\Models\IntrantCategory;
 use Filament\Forms;
 use App\Models\Farm;
 use App\Models\Unit;
 use Filament\Tables;
 use App\Models\Intrant;
+use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Models\Preconisation;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Repeater;
+use App\Actions\PrintPreconisationAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PreconisationsRelationManager extends RelationManager
@@ -54,6 +56,12 @@ class PreconisationsRelationManager extends RelationManager
                         ->required()
                         ->label('Culture')
                         ->default(1),
+                    Forms\Components\Select::make('category_id')
+                        ->options(fn(RelationManager $livewire) => IntrantCategory::all()->pluck('name', 'id'))
+                        ->required()
+                        ->live()
+                        ->label('Catégorie')
+                        ->default(1),
                 ])->columns(3),
 
                 Forms\Components\Section::make([
@@ -63,7 +71,10 @@ class PreconisationsRelationManager extends RelationManager
                         ->schema([
                             Forms\Components\Select::make('intrant_id')
                                 ->options(Intrant::take(20)->get()->pluck('name_fr', 'id'))
-                                ->getSearchResultsUsing(fn(string $search): array => Intrant::where('name_fr', 'like', "%{$search}%")->limit(50)->pluck('name_fr', 'id')->toArray())
+                                ->getSearchResultsUsing(fn(string $search): array => Intrant::where('name_fr', 'like', "%{$search}%")
+                                    ->limit(50)
+                                    ->pluck('name_fr', 'id')
+                                    ->toArray())
                                 ->getOptionLabelUsing(fn($value): ?string => Intrant::find($value)?->name_fr)
                                 ->required()
                                 ->label('Intrant')

@@ -67,7 +67,11 @@ class FarmerResource extends Resource
                                     ->label('Nom complet')
                                     ->maxLength(200)
                                     ->placeholder('Mohamed Ali')
-                                    ->columnSpan(2),
+                                    ->columnSpan(2)
+                                    ->unique('farmers', 'fullname', null, true)
+                                    ->validationMessages([
+                                        'unique' => 'Ce nom existe déja',
+                                    ]),
                                 Forms\Components\TextInput::make('address')
                                     ->label('Adresse')
                                     ->placeholder('Rue 1, Rue 2, ...)')
@@ -95,21 +99,44 @@ class FarmerResource extends Resource
                                     ->required()
                                     ->preload()
                                     ->searchable(),
-                                Forms\Components\TextInput::make('phone1')
-                                    ->numeric()
-                                    ->label('Portable 1')
-                                    ->placeholder('0600000000')
-                                    ->maxLength(100),
-                                Forms\Components\TextInput::make('phone2')
-                                    ->numeric()
-                                    ->maxLength(100)
-                                    ->placeholder('0600000000')
-                                    ->label('Portable 2'),
                                 Forms\Components\TextInput::make('email')
                                     ->email()
                                     ->label('Email')
                                     ->placeholder('yN4oT@example.com')
                                     ->maxLength(100),
+                                Forms\Components\Repeater::make('contacts')
+                                    ->label('Contacts')
+                                    ->relationship('contacts')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('Nom')
+                                            ->placeholder('Nom de l\'agriculteur')
+                                            ->maxLength(100)
+                                            ->required(),
+                                        Forms\Components\TextInput::make('phone')
+                                            ->label('Téléphone')
+                                            ->placeholder('06 00 00 00 00')
+                                            ->tel()
+                                            ->maxLength(20)
+                                            ->unique('contacts', 'phone', null, true)
+                                            ->validationMessages([
+                                                'unique' => 'Ce numéro existe déja',
+                                            ]),
+                                        Forms\Components\TextInput::make('email')
+                                            ->label('Email')
+                                            ->placeholder('yN4oT@example.com')
+                                            ->email()
+                                            ->maxLength(100)
+                                            ->unique('contacts', 'email', null, true)
+                                            ->validationMessages([
+                                                'unique' => 'Cet email existe déja',
+
+                                            ]),
+
+                                    ])
+                                    ->columns(3)
+                                    ->columnSpan(2),
+
                             ])
                             ->columns(2),
                         Section::make('Informations de l\'agriculture')

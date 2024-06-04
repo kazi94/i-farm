@@ -10,12 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('culture_settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique()->required();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamps();
+        Schema::disableForeignKeyConstraints();
+
+        Schema::table('intrants', function (Blueprint $table) {
+            $table->unsignedSmallInteger('score')->nullable()->default(0)->comment('0-10');
+            $table->boolean('is_approved')->default(true)->comment('0 - not approved, 1 - approved');
         });
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -23,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('culture_settings');
+        //
     }
 };

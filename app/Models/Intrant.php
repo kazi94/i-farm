@@ -21,6 +21,8 @@ class Intrant extends Model
         'name_fr',
         'name_ar',
         'formulation',
+        'score',
+        'is_approved',
         'homologation_number',
         'firm_id',
         'intrant_sous_category_id',
@@ -36,6 +38,7 @@ class Intrant extends Model
     protected $casts = [
         'id' => 'integer',
         'firm_id' => 'integer',
+        'is_approved' => 'boolean',
         'intrant_sous_category_id' => 'integer',
         'distributor_id' => 'integer',
         'intrant_category_id' => 'integer',

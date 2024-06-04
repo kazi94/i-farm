@@ -22,8 +22,6 @@ class Farmer extends Model
         'code',
         'fullname',
         'address',
-        'phone1',
-        'phone2',
         'website',
         'facebook_url',
         'twitter_url',
@@ -86,6 +84,10 @@ class Farmer extends Model
         return $this->belongsTo(Daira::class);
     }
 
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
 
     public function createdBy(): BelongsTo
     {

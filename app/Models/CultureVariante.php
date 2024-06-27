@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CultureSetting extends Model
+class CultureVariante extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'culture_id',
+        'culture_setting_id',
     ];
 
-    public function category()
+    public function cultureSetting()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(CultureSetting::class);
     }
 }

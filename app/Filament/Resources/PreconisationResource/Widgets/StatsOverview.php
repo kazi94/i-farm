@@ -14,7 +14,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Préconisations', Preconisation::count()),
             Stat::make('Montants totals', Preconisation::totalAmount() . ' DA'),
             // Stat::make('Montants moyens', Preconisation::averageAmount()),
-            Stat::make('Dernière préconisation', Preconisation::lastOne()->date_preconisation ?? 'Aucune'),
+            // Stat::make('Dernière préconisation', Preconisation::lastOne() ? Preconisation::lastOne()->date_preconisation : 'Aucune'),
         ];
     }
 }

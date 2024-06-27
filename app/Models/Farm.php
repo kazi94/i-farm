@@ -21,9 +21,25 @@ class Farm extends Model
         'classification',
         'area',
         'unit_id',
-        'category_id',
+        'culture_id',
         'culture_setting_id',
+        'culture_variante_id',
         'farmer_id',
+        'density',
+        'age',
+        'distance_tree',
+        'distance_line',
+        'n',
+        'p',
+        'k',
+        'ca',
+        's',
+        'so3',
+        'mgo',
+        'b',
+        'cu',
+        'fe',
+        'mn',
         'created_by',
         'updated_by',
     ];
@@ -36,6 +52,19 @@ class Farm extends Model
     protected $casts = [
         'id' => 'integer',
         'area' => 'float',
+        'distance_tree' => 'float',
+        'distance_line' => 'float',
+        'n' => 'float',
+        'p' => 'float',
+        'k' => 'float',
+        'ca' => 'float',
+        's' => 'float',
+        'so3' => 'float',
+        'mgo' => 'float',
+        'b' => 'float',
+        'cu' => 'float',
+        'fe' => 'float',
+        'mn' => 'float',
         'farmer_id' => 'integer',
         'created_by' => 'integer',
         'updated_by' => 'integer',
@@ -43,14 +72,20 @@ class Farm extends Model
         'updated_at' => 'timestamp',
     ];
 
-    public function category(): BelongsTo
+    public $append = ['custom_area'];
+
+    public function culture(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Culture::class);
     }
 
     public function cultureSetting(): BelongsTo
     {
         return $this->belongsTo(CultureSetting::class);
+    }
+    public function cultureVariante(): BelongsTo
+    {
+        return $this->belongsTo(CultureVariante::class);
     }
 
     public function farmer(): BelongsTo
@@ -70,5 +105,10 @@ class Farm extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function getCustomAreaAttribute()
+    {
+        return $this->area . ' ' . $this->unit->name;
     }
 }

@@ -62,9 +62,19 @@
 
     <div class="customer-details">
         <table>
-            <tr>
+            <thead>
                 <th>Agriculteur</th>
-                <td>{{ $receipt->farmer->fullnmae }}</td>
+                <th>Culture</th>
+            </thead>
+
+            <tr>
+                <td>{{ $receipt->farmer->fullname }}</td>
+                <td>{{ $receipt->farm->culture->name }}</td>
+            </tr>
+
+            <tr>
+                <td>{{ $receipt->farmer->wilaya->name }}</td>
+                <td><b>Superficie:</b>{{ $receipt->farm->area }} {{ $receipt->farm->unit->name }}</td>
             </tr>
         </table>
     </div>
@@ -93,9 +103,9 @@
         <p style="  font-size: 1.2em; ">Ingénieur: {{ $receipt?->createdBy?->name }}</p>
     </div>
 
-    <div class="footer">
-        <p>Note</p>
-        <p>{{ $receipt->note }}</p>
+    <div>
+        <h3 style="margin-bottom: 0px">Note</h3>
+        <p>{!! html_entity_decode($receipt->note)!!}</p>
     </div>
 
 </body>

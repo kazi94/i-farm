@@ -31,7 +31,8 @@ class SevenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
             $principesAc = strtolower($row['matiere_active']);
             $concentrations = strtolower($row['concentration']);
             $formulation = $row['formulation'];
-            $depredateurs = strtolower($row['depredateurs']);
+            $injectionMode = strtolower($row['mode_dapplication']);
+            $utilization = strtolower($row['utilisation']);
             $cultures = strtolower($row['cultures']);
             $dosesUnit = strtolower($row['doses_dutilisation']);
             $dar = $row['dar'];
@@ -78,37 +79,30 @@ class SevenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 
             $dar = explode('-', $dar);
 
+            foreach ($cultures as $key => $culture) {
+
+                $culture = $this->getOrCreateCulture($culture); // get or create the culture
+
+                $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
+                $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
+
+                $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
+                $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
 
 
-
-            foreach ($depredateurs as $depredateur) {
-
-                $depredateur = $this->getOrCreateDepredateur($depredateur); // get or create the depredateur
-
-                foreach ($cultures as $key => $culture) {
-
-                    $culture = $this->getOrCreateCulture($culture); // get or create the culture
-
-                    $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
-                    $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
-
-                    $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
-                    $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
-
-
-                    $intrant->intrantsCultures()->create(
-                        [
-                            'culture_id' => $culture->id,
-                            'depredateur_id' => $depredateur->id,
-                            'dose_min' => $doseMin,
-                            'dose_max' => $doseMax,
-                            'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
-                            'dar_min' => $darMin,
-                            'dar_max' => $darMax,
-                            'observation' => $observation,
-                        ]
-                    );
-                }
+                $intrant->intrantsCultures()->create(
+                    [
+                        'culture_id' => $culture->id,
+                        'injection_mode' => $injectionMode,
+                        'utilization' => $utilization,
+                        'dose_min' => $doseMin,
+                        'dose_max' => $doseMax,
+                        'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
+                        'dar_min' => $darMin,
+                        'dar_max' => $darMax,
+                        'observation' => $observation,
+                    ]
+                );
             }
 
             $prevIntrant = $intrant; // intrant is an ORM object

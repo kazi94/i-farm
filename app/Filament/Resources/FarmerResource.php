@@ -111,8 +111,7 @@ class FarmerResource extends Resource
                                         Forms\Components\TextInput::make('name')
                                             ->label('Nom')
                                             ->placeholder('Nom de l\'agriculteur')
-                                            ->maxLength(100)
-                                            ->required(),
+                                            ->maxLength(100),
                                         Forms\Components\TextInput::make('phone')
                                             ->label('Téléphone')
                                             ->placeholder('06 00 00 00 00')

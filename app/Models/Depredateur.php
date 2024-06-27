@@ -34,9 +34,12 @@ class Depredateur extends Model
 
     public function intrantsCultures()
     {
-        return $this->belongsToMany(Culture::class, 'culture_intrant', 'culture_id', 'depredateur_id');
+        return $this->belongsToMany(IntrantCulture::class, 'culture_intrant', 'culture_id', 'depredateur_id');
     }
-
+    public function cultures()
+    {
+        return $this->belongsToMany(Culture::class, 'culture_intrant');
+    }
     public function getNameAttribute($value)
     {
         return strtoupper(substr($value, 0, 1)) . substr($value, 1);

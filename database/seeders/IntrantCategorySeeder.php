@@ -13,7 +13,7 @@ class IntrantCategorySeeder extends Seeder
     public function run(): void
     {
         IntrantCategory::create([
-            'name' => 'produits phytologiques',
+            'name' => 'produits phytosanitaires',
         ])->intrantSousCategories()->createMany([
                     [
                         'name' => 'insecticides',

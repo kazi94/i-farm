@@ -14,7 +14,7 @@ class PreconisationPrintController extends Controller
      */
     public function __invoke(Request $request, Preconisation $preconisation)
     {
-        $preconisation->load(['preconisationItems.intrant', 'farmer', 'farm', 'createdBy']);
+        $preconisation->load(['preconisationItems.intrant', 'farmer.wilaya', 'farm.culture', 'farm.unit', 'createdBy']);
         $pdf = PDF::loadView('users.preconisations.pdfs.preconisation', [
             'receipt' => $preconisation,
             'items' => $preconisation->preconisationItems

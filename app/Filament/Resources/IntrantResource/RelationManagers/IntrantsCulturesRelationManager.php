@@ -6,13 +6,17 @@ use Filament\Forms;
 use App\Models\Unit;
 use Filament\Tables;
 use App\Models\Culture;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Depredateur;
+use App\Models\CultureSetting;
+use App\Models\CultureVariante;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -45,6 +49,61 @@ class IntrantsCulturesRelationManager extends RelationManager
                             ->label('Culture')
                             ->required(),
 
+                    ]),
+                Select::make('culture_setting_id')
+                    ->label('Paramètres de Culture')
+                    ->hidden(fn(Get $get) => !$get('culture_id'))
+                    ->options(fn(Get $get) => CultureSetting::where('culture_id', $get('culture_id'))->pluck('name', 'id')->toArray())
+                    ->live()
+                    ->relationship('cultureSetting', 'name', fn(Builder $query, Get $get) => $query->where('culture_id', $get('culture_id')))
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Paramètres de Culture')
+                            ->unique('culture_settings', 'name', null, true)
+                            ->required()
+                            ->validationMessages([
+                                'unique' => 'Ce nom existe déja'
+                            ]),
+                        Select::make('culture_id')
+                            ->label('Culture')
+                            ->unique('culture_settings', 'name', null, true)
+                            ->options(fn(Get $get) => Culture::all()->pluck('name', 'id'))
+                            ->required()
+                            ->validationMessages([
+                                'unique' => 'Ce nom existe déja'
+                            ])
+                    ])
+                    ->editOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Paramètres de Culture')
+                            ->required(),
+                        Select::make('culture_id')
+                            ->label('Culture')
+                            ->options(fn(Get $get) => Culture::all()->pluck('name', 'id'))
+                            ->required()
+                    ]),
+                Select::make('culture_variante_id')
+                    ->label('Variété')
+                    ->hidden(fn(Get $get) => !$get('culture_setting_id'))
+                    // ->options(fn(Get $get) => CultureVariante::where('culture_setting_id', $get('culture_setting_id'))->pluck('name', 'id')->toArray())
+                    ->relationship('cultureVariante', 'name', fn(Builder $query, Get $get) => $query->where('culture_setting_id', $get('culture_setting_id')))
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Variété')
+                            ->required(),
+                        Select::make('culture_setting_id')
+                            ->label('Famille')
+                            ->options(fn(Get $get) => CultureSetting::all()->pluck('name', 'id'))
+                            ->required()
+                    ])
+                    ->editOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Variété')
+                            ->required(),
+                        Select::make('culture_setting_id')
+                            ->label('Famille')
+                            ->options(fn(Get $get) => CultureSetting::all()->pluck('name', 'id'))
+                            ->required()
                     ]),
                 Forms\Components\Select::make('depredateur_id')
                     ->label('Depredateur')
@@ -116,6 +175,14 @@ class IntrantsCulturesRelationManager extends RelationManager
                         'numeric' => 'DAR Max doit etre un entier',
                         'min' => 'DAR Max doit etre superieur ou egale a 0',
                         'gte' => 'DAR Max doit etre superieur ou egale a DAR Min',
+                    ]),
+                Forms\Components\TextInput::make('price')
+                    ->label('Prix')
+                    ->numeric()
+                    ->rules(['min:0'])
+                    ->suffix('DA')
+                    ->validationMessages([
+                        'numeric' => 'DAR Max doit etre un entier',
                     ]),
                 Forms\Components\Textarea::make('observation')
                     ->label('Observation')

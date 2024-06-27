@@ -23,6 +23,8 @@ class Preconisation extends Model
         'date_preconisation',
         'note',
         'farmer_id',
+        'culture_id',
+        'depredateur_id',
         'farm_id',
         'created_by',
         'updated_by',
@@ -42,9 +44,6 @@ class Preconisation extends Model
         'updated_by' => 'integer',
         'deleted_at' => 'timestamp',
     ];
-
-
-    public $appends = ['total_amount'];
 
     public function preconisationItems(): HasMany
     {

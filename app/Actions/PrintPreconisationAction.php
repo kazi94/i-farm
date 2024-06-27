@@ -14,7 +14,7 @@ class PrintPreconisationAction
     public static function create(): Action
     {
         return Action::make('printPreconisation')
-            ->url(fn(Model $record) => route('farmer.preconisation.print', [$record->farmer->id, $record->id]))
+            ->url(fn(Model $record) => route('farmer.preconisation.print', [$record->farmer_id, $record->id]))
             ->label('Imprimer')
             ->color('secondary')
             ->icon('heroicon-o-printer')

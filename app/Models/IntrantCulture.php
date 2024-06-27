@@ -20,8 +20,12 @@ class IntrantCulture extends Model
         'dose_max',
         'dar_min',
         'dar_max',
+        'price',
         'observation',
     ];
+
+
+
 
     public function intrant()
     {
@@ -42,5 +46,12 @@ class IntrantCulture extends Model
     {
         return $this->belongsTo(Unit::class);
     }
-
+    public function cultureSetting()
+    {
+        return $this->belongsTo(CultureSetting::class);
+    }
+    public function cultureVariante()
+    {
+        return $this->belongsTo(CultureVariante::class);
+    }
 }

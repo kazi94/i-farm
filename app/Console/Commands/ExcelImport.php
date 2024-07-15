@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Imports\FirstSheetImport;
-use App\Imports\IntrantsImport;
+use App\Imports\Intrants2017Import;
+use App\Imports\Intrants2022Import;
 use Illuminate\Console\Command;
 
 class ExcelImport extends Command
@@ -14,9 +15,15 @@ class ExcelImport extends Command
 
     public function handle()
     {
+
+
         $this->output->title('Starting import');
-        // (new FirstSheetImport)->withOutput($this->output)->import('intrants.xlsx');
-        (new IntrantsImport)->withOutput($this->output)->import('intrants.xlsx');
+        // (new FirstSheetImport)->withOutput($this->output)->import('intrants_2022.xlsx');
+        // (new Intrants2022Import)->withOutput($this->output)->import('intrants82022.xlsx');
+
+        //(new FirstSheetImport)->withOutput($this->output)->import('intrants_2017.xlsx');
+        (new Intrants2017Import)->withOutput($this->output)->import('intrants_2017.xlsx');
+
         $this->output->success('Import successful');
     }
 }

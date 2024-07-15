@@ -17,16 +17,15 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithProgressBar;
 
-class NineSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
+class ElevenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 {
     use Importable;
     public function collection(Collection $rows)
     {
         // intrant belongs to many sousIntrantCategory
-        $sousIntrantCateg = IntrantSousCategory::where('name', 'nematicides')->first();
+        $sousIntrantCateg = IntrantSousCategory::where('name', 'INHIBITEURS DE LA GERMINATION')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
-            echo json_encode($row, JSON_PRETTY_PRINT);
 
             $intrant = strtolower($row['nom_commercial']);
             $principesAc = strtolower($row['matiere_active']);

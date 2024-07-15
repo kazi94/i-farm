@@ -27,131 +27,92 @@ class FirstSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
         $sousIntrantCateg = IntrantSousCategory::where('name', 'insecticides')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
-            $cultures[] = strtolower($row['dar']);
-
-            //     $intrant = strtolower($row['nom_commercial']);
-            //     $principesAc = strtolower($row['matiere_active']);
-            //     $concentrations = strtolower($row['concentration']);
-            //     $formulation = $row['formulation'];
-            //     $depredateurs = strtolower($row['depredateurs']);
-            //     $cultures = strtolower($row['cultures']);
-            //     $dosesUnit = strtolower($row['doses_dutilisation']);
-            //     $dar = $row['dar'];
-            //     $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
-            //     $n_dhomologation = $row['n_dhomologation'];
-            //     $firme = rtrim(strtolower($row['firmes']), '.');
-            //     $representant = strtolower($row['representant']);
-            //     // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
-            //     if (is_null($prevIntrant) || strcmp($intrant, strtolower($prevIntrant->name_fr)) !== 0) {
+            $intrant = strtolower($row['nom_commercial']);
+            $principesAc = strtolower($row['matiere_active']);
+            $concentrations = strtolower($row['concentration']);
+            $formulation = $row['formulation'];
+            $depredateurs = strtolower($row['depredateurs']);
+            $cultures = strtolower($row['cultures']);
+            $dosesUnit = strtolower($row['doses_dutilisation']);
+            $dar = $row['dar'];
+            $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
+            $n_dhomologation = $row['n_dhomologation'];
+            $firme = rtrim(strtolower($row['firmes']), '.');
+            $representant = strtolower($row['representant']);
+            // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
+            if (is_null($prevIntrant) || strcmp($intrant, strtolower($prevIntrant->name_fr)) !== 0) {
 
 
-            //         // intrant belongs to firme, check if the firm exists then return id
-            //         $firme = $firme ? $this->getOrCreateFirm($firme) : null;
+                // intrant belongs to firme, check if the firm exists then return id
+                $firme = $firme ? $this->getOrCreateFirm($firme) : null;
 
-            //         // intrant belongs to distributeur, check if the distributeur exists then return id
-            //         $representant = $representant ? $this->getOrCreateDistributeur($representant) : null;
+                // intrant belongs to distributeur, check if the distributeur exists then return id
+                $representant = $representant ? $this->getOrCreateDistributeur($representant) : null;
 
-            //         if ($firme && $representant)
-            //             $representant->firms()->attach($firme); // representant belongs to many firms
+                if ($firme && $representant)
+                    $representant->firms()->attach($firme); // representant belongs to many firms
 
-            //         // Get or create the intrant
-            //         $intrant = $this->getOrCreateIntrant($intrant, $sousIntrantCateg, $formulation, $n_dhomologation, $firme, $representant);
+                // Get or create the intrant
+                $intrant = $this->getOrCreateIntrant($intrant, $sousIntrantCateg, $formulation, $n_dhomologation, $firme, $representant);
 
-            //         // Attach intrnat to Principes Actifs
-            //         $this->attachPrincipesActifs($intrant, $principesAc, $concentrations);
+                // Attach intrnat to Principes Actifs
+                $this->attachPrincipesActifs($intrant, $principesAc, $concentrations);
 
-            //     } else {
-            //         $intrant = $prevIntrant;
-            //     }
-
-            //     // depredateurs is a string seperated by '/'
-            //     $depredateurs = explode('/', $depredateurs);
-
-            //     // cultures is a string seperated by '/'
-            //     $cultures = explode('/', $cultures);
-
-            //     // doses is a string seperated by ' ' the first one is the value and the second one is the unit
-            //     $dosesUnit = explode(' ', $dosesUnit);
-
-            //     // doses is a string seperated by '-'
-            //     $doses = explode('-', $dosesUnit[0]);
-            //     $unit = isset($dosesUnit[1]) ? $dosesUnit[1] : null;
-
-            //     // dar is a string seperated by '-'
-
-            //     $dar = explode('-', $dar);
-
-
-
-
-            //     foreach ($depredateurs as $depredateur) {
-
-            //         $depredateur = $this->getOrCreateDepredateur($depredateur); // get or create the depredateur
-
-            //         foreach ($cultures as $key => $culture) {
-
-            //             $culture = $this->getOrCreateCulture($culture); // get or create the culture
-
-            //             $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
-            //             $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
-
-            //             $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
-            //             $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
-
-
-            //             $intrant->intrantsCultures()->create(
-            //                 [
-            //                     'culture_id' => $culture->id,
-            //                     'depredateur_id' => $depredateur->id,
-            //                     'dose_min' => $doseMin,
-            //                     'dose_max' => $doseMax,
-            //                     'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
-            //                     'dar_min' => $darMin,
-            //                     'dar_max' => $darMax,
-            //                     'observation' => $observation,
-            //                 ]
-            //             );
-            //         }
-            //     }
-
-            //     $prevIntrant = $intrant; // intrant is an ORM object
-        }
-        $tmpCulture = [];
-        // for each culture get culture seperated by '/'
-        foreach ($cultures as $value) {
-            // retrieve words seperated by '/'
-            $words = explode('+', $value);
-            foreach ($words as $word) {
-
-                $tmpCulture[] = strtolower($word);
+            } else {
+                $intrant = $prevIntrant;
             }
-        }
 
-        $tmpCulture = array_unique($cultures);
+            // depredateurs is a string seperated by '/'
+            $depredateurs = explode('/', $depredateurs);
 
-        sort($tmpCulture);
+            // cultures is a string seperated by '/'
+            $cultures = explode('/', $cultures);
 
-        //var_dump($tmpCulture);
-        // write in to test.json file
-        $json = json_encode($tmpCulture, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            // doses is a string seperated by ' ' the first one is the value and the second one is the unit
+            $dosesUnit = explode(' ', $dosesUnit);
 
-        // if the file is not empty then append it else create it
-        if (file_exists(database_path('data/cultures.json'))) {
-            // loop through the data in the file
-            $data = file_get_contents(database_path('data/cultures.json'));
+            // doses is a string seperated by '-'
+            $doses = explode('-', $dosesUnit[0]);
+            $unit = isset($dosesUnit[1]) ? $dosesUnit[1] : null;
 
-            $data = json_decode($data, true);
+            // dar is a string seperated by '-'
 
-            $data = array_merge($data, $tmpCulture);
+            $dar = explode('-', $dar);
 
-            $data = array_unique($data);
-            sort($data);
 
-            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-            file_put_contents(database_path('data/cultures.json'), $json);
-        } else {
-            file_put_contents(database_path('data/cultures.json'), $json);
+
+            foreach ($depredateurs as $depredateur) {
+
+                $depredateur = $this->getOrCreateDepredateur($depredateur); // get or create the depredateur
+
+                foreach ($cultures as $key => $culture) {
+
+                    $culture = $this->getOrCreateCulture($culture); // get or create the culture
+
+                    $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
+                    $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
+
+                    $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
+                    $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
+
+
+                    $intrant->intrantsCultures()->create(
+                        [
+                            'culture_id' => $culture->id,
+                            'depredateur_id' => $depredateur->id,
+                            'dose_min' => $doseMin,
+                            'dose_max' => $doseMax,
+                            'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
+                            'dar_min' => $darMin,
+                            'dar_max' => $darMax,
+                            'observation' => $observation,
+                        ]
+                    );
+                }
+            }
+
+            $prevIntrant = $intrant; // intrant is an ORM object
         }
 
 

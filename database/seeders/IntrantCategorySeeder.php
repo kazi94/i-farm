@@ -52,6 +52,12 @@ class IntrantCategorySeeder extends Seeder
                         'name' => 'adjuvants',
                     ],
                     [
+                        'name' => 'REGULATEURS DE CROISSANCES',
+                    ],
+                    [
+                        'name' => 'INHIBITEURS DE LA GERMINATION',
+                    ],
+                    [
                         'name' => 'autres',
                     ]
                 ]);

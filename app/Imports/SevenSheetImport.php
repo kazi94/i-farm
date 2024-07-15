@@ -62,8 +62,6 @@ class SevenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
                 $intrant = $prevIntrant;
             }
 
-            // depredateurs is a string seperated by '/'
-            $depredateurs = explode('/', $depredateurs);
 
             // cultures is a string seperated by '/'
             $cultures = explode('/', $cultures);

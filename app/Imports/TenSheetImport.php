@@ -23,9 +23,10 @@ class TenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
     public function collection(Collection $rows)
     {
         // intrant belongs to many sousIntrantCategory
-        $sousIntrantCateg = IntrantSousCategory::where('name', 'autres')->first();
+        $sousIntrantCateg = IntrantSousCategory::where('name', 'REGULATEURS DE CROISSANCES')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
+            echo json_encode($row, JSON_PRETTY_PRINT);
 
             $intrant = strtolower($row['nom_commercial']);
             $principesAc = strtolower($row['matiere_active']);

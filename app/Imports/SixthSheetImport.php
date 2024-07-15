@@ -26,6 +26,7 @@ class SixthSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
         $sousIntrantCateg = IntrantSousCategory::where('name', 'adjuvants')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
+            echo json_encode($row, JSON_PRETTY_PRINT);
 
             $intrant = strtolower($row['nom_commercial']);
             $principesAc = strtolower($row['matiere_active']);

@@ -26,8 +26,6 @@ class SixthSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
         $sousIntrantCateg = IntrantSousCategory::where('name', 'adjuvants')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
-            echo json_encode($row, JSON_PRETTY_PRINT);
-
             $intrant = strtolower($row['nom_commercial']);
             $principesAc = strtolower($row['matiere_active']);
             $concentrations = strtolower($row['concentration']);
@@ -38,7 +36,7 @@ class SixthSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
             $dar = $row['dar'];
             $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
             $n_dhomologation = $row['n_dhomologation'];
-            $firme = strtolower($row['firmes']);
+            $firme = rtrim(strtolower($row['firmes']), '.');
             $representant = strtolower($row['representant']);
 
             // Check if the current intrant is different from the previous intrant to avoid intrant duplicates

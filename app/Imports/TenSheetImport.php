@@ -26,7 +26,6 @@ class TenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
         $sousIntrantCateg = IntrantSousCategory::where('name', 'REGULATEURS DE CROISSANCES')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
-            echo json_encode($row, JSON_PRETTY_PRINT);
 
             $intrant = strtolower($row['nom_commercial']);
             $principesAc = strtolower($row['matiere_active']);
@@ -38,7 +37,7 @@ class TenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
             $dar = $row['dar'];
             $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
             $n_dhomologation = $row['n_dhomologation'];
-            $firme = strtolower($row['firmes']);
+            $firme = rtrim(strtolower($row['firmes']), '.');
             $representant = strtolower($row['representant']);
 
             // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
@@ -248,10 +247,10 @@ class TenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 
             // get the unit from concentration, concentrations is a string seperated by space when the first at left is
             // the value of concentration and the second at right is the unit
-            $value = explode(' ', $concentrations[$key])[0];
+            $value = isset($concentrations[$key]) ? explode(' ', $concentrations[$key])[0] : null;
             $value = floatval(str_replace(',', '.', $value));
 
-            $unit = explode(' ', $concentrations[$key]);
+            $unit = isset($concentrations[$key]) ? explode(' ', $concentrations[$key]) : null;
             $unit = isset($unit[1]) ? $unit[1] : null;
 
             // Check if the unit exist in unit table then create one and return id

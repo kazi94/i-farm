@@ -36,7 +36,7 @@ class ThirdSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
             $dar = $row['dar'];
             $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
             $n_dhomologation = $row['n_dhomologation'];
-            $firme = strtolower($row['firmes']);
+            $firme = rtrim(strtolower($row['firmes']), '.');
             $representant = strtolower($row['representant']);
 
             // check if intrant is not null

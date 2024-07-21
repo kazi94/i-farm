@@ -12,13 +12,9 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        Unit::createMany([
-            [
-                'name' => 'ha',
-            ],
-            [
-                'name' => 'mètre',
-            ],
+        Unit::insert([
+            ['name' => 'ha'],
+            ['name' => 'mètre'],
         ]);
 
 

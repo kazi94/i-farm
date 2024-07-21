@@ -22,6 +22,7 @@ class PreconisationItems extends Model
         'preconisation_id',
         'unit_id',
         'intrant_id',
+        'usage_mode'
     ];
 
     /**

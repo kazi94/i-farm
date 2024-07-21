@@ -26,18 +26,18 @@ class Intrants2017Import implements WithMultipleSheets, WithProgressBar
     public function sheets(): array
     {
         return [
-            // 'INSECTICIDES' => new FirstSheetImport(),
-            // 'ACARICIDES' => new SecondSheetImport(),
-            // 'FONGICIDES' => new ThirdSheetImport(),
-            // 'HERBICIDES' => new FourthSheetImport(),
-            // 'LIMATICIDES' => new FifthSheetImport(),
-            // 'ADJUVANTS' => new SixthSheetImport(),
-            // 'STIMULANTS' => new SevenSheetImport(),
-            // 'RODENTICIDES' => new EighttSheetImport(),
-            // 'NEMATICIDES' => new NineSheetImport(),
+            'INSECTICIDES' => new FirstSheetImport(),
+            'ACARICIDES' => new SecondSheetImport(),
+            'FONGICIDES' => new ThirdSheetImport(),
+            'HERBICIDES' => new FourthSheetImport(),
+            'LIMATICIDES' => new FifthSheetImport(),
+            'ADJUVANTS' => new SixthSheetImport(),
+            'STIMULANTS' => new SevenSheetImport(),
+            'RODENTICIDES' => new EighttSheetImport(),
+            'NEMATICIDES' => new NineSheetImport(),
             'REGULATEURS DE CROISSANCES ' => new TenSheetImport(),
-            // 'INHIBITEURS DE LA GERMINATION' => new ElevenSheetImport(),
-            // 'AUTRES' => new TwelveSheetImport(),
+            'INHIBITEURS DE LA GERMINATION' => new ElevenSheetImport(),
+            'AUTRES' => new TwelveSheetImport(),
         ];
     }
 

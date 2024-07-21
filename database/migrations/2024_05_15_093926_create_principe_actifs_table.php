@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('principe_actifs', function (Blueprint $table) {
             $table->id();
-            $table->string('name_fr', 100);
+            $table->string('name_fr', 250);
             $table->string('name_latin', 100)->nullable();
             $table->string('description', 100)->nullable();
             $table->timestamps();

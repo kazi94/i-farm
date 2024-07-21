@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('intrant_principe_actif', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('intrant_id');
-            $table->foreignId('principe_actif_id')->nullable();
+            $table->foreignId('intrant_id')->constrained('intrants')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('principe_actif_id')->nullable()->constrained('principe_actifs')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('unit_id')->nullable();
             $table->unsignedDecimal('concentration', 8, 2)->nullable();
             $table->timestamps();

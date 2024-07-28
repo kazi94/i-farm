@@ -12,11 +12,11 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        Unit::insert([
-            ['name' => 'ha'],
-            ['name' => 'mètre'],
-        ]);
+        $file_path = base_path('database\data\units.sql');
 
+        \DB::unprepared(
+            file_get_contents($file_path)
+        );
 
     }
 }

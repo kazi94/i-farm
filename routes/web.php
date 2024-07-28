@@ -19,6 +19,6 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/farmer/{farmer}/preconisation/{preconisation}/print', App\Http\Controllers\User\Farmer\FarmerPreconisationPrintController::class)->name('farmer.preconisation.print');
-    Route::get('/preconisation/{preconisation}/print', App\Http\Controllers\User\Preconisation\PreconisationPrintController::class)->name('preconisation.print');
+    Route::get('/farmer/{farmer}/preconisation/{preconisation}/print-fr', App\Http\Controllers\User\Farmer\FarmerPreconisationPrintFrController::class)->name('farmer.preconisation-fr.print');
+    Route::get('/farmer/{farmer}/preconisation/{preconisation}/print-ar', App\Http\Controllers\User\Farmer\FarmerPreconisationPrintArController::class)->name('farmer.preconisation-ar.print');
 });

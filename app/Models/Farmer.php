@@ -122,4 +122,9 @@ class Farmer extends Model
             return 'Bronze';
         }
     }
+
+    public static function generateCode()
+    {
+        return Farmer::count() + 1;
+    }
 }

@@ -16,10 +16,14 @@ use App\Models\Depredateur;
 use App\Models\Preconisation;
 use App\Models\IntrantCulture;
 use Filament\Resources\Resource;
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Repeater;
-use Illuminate\Database\Eloquent\Model;
-use App\Actions\PrintPreconisationAction;
+use Filament\Forms\Components\Actions\Action;
+use App\Actions\ArabicPrintPreconisationAction;
+use App\Actions\FrenchPrintPreconisationAction;
 use App\Filament\Resources\PreconisationResource\Pages;
 
 class PreconisationResource extends Resource
@@ -58,7 +62,26 @@ class PreconisationResource extends Resource
                         ->options(fn(Get $get) => Farm::with('culture')->where('farmer_id', $get('farmer_id'))->get()->pluck('culture.name', 'culture.id'))
                         ->required()
                         ->live()
-                        ->label('Culture'),
+                        ->label('Culture')
+                        ->suffixAction(
+                            Action::make('Détails')
+                                ->modalSubmitAction(false)
+                                ->color('primary')
+                                ->icon('heroicon-o-information-circle')
+                                ->modalAlignment(Alignment::Center)
+                                ->modalWidth(MaxWidth::Small)
+                                ->modalContent(
+                                    fn(Get $get): View => view(
+                                        'filament.pages.actions.preconisation-farm-details',
+                                        [
+                                            'farm' => Farm::with('unit')
+                                                ->where('culture_id', $get('culture_id'))
+                                                ->where('farmer_id', $get('farmer_id'))
+                                                ->first()
+                                        ],
+                                    )
+                                )
+                        ),
                     Forms\Components\Select::make('depredateur_id')
                         ->options(
                             fn(Get $get) => Depredateur::join('culture_intrant', 'depredateurs.id', '=', 'culture_intrant.depredateur_id')
@@ -80,6 +103,7 @@ class PreconisationResource extends Resource
                                     function (Get $get) {
                                         $intrants = $get('../../culture_id') ?
                                             Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
+                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
                                                 ->where('culture_intrant.culture_id', $get('../../culture_id'))
                                                 ->when(
                                                     $get('../../depredateur_id'),
@@ -87,8 +111,14 @@ class PreconisationResource extends Resource
                                                     $query->where('culture_intrant.depredateur_id', $get('../../depredateur_id'))
                                                 )
                                                 ->distinct()
-                                                ->get(['intrants.name_fr', 'intrants.id'])
-                                                ->pluck('name_fr', 'id')
+                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id'])
+                                                ->map(function ($intrant) {
+                                                    return [
+                                                        'id' => $intrant->id,
+                                                        'description' => $intrant->name_fr . ' (' . $intrant->dose_min . ' - ' . $intrant->dose_max . ' ' . $intrant->unitName . ')',
+                                                    ];
+                                                })
+                                                ->pluck('description', 'id')
                                             :
                                             Intrant::take(20)->get()->pluck('name_fr', 'id');
                                         return $intrants;
@@ -110,7 +140,8 @@ class PreconisationResource extends Resource
                                 ->live()
                                 ->afterStateUpdated(
                                     function (?string $state, Set $set, Get $get) {
-                                        $intrantCulture = IntrantCulture::where('intrant_id', $state)
+                                        $intrantCulture = IntrantCulture::with('unit')
+                                            ->where('intrant_id', $state)
                                             ->where('culture_id', $get('../../culture_id'))
                                             ->where('depredateur_id', $get('../../depredateur_id'))
                                             ->first();
@@ -120,7 +151,9 @@ class PreconisationResource extends Resource
                                             $intrantCulture ? $intrantCulture->price : 0
                                         );
 
-                                        $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
+                                        // $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
+
+                                        $set('dose', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name : 0);
                                     }
 
                                 ),
@@ -130,11 +163,22 @@ class PreconisationResource extends Resource
                                 ->label('Quantite')
                                 ->minValue(0)
                                 ->default(1),
-                            Forms\Components\Select::make('unit_id')
+                            // Forms\Components\Select::make('unit_id')
+                            //     ->required()
+                            //     ->label('Unite')
+                            //     ->options(Unit::all()->pluck('name', 'id'))
+                            //     ->default(1),
+                            Forms\Components\TextInput::make('dose')
                                 ->required()
-                                ->label('Unite')
-                                ->options(Unit::all()->pluck('name', 'id'))
-                                ->default(1),
+                                ->label('Dose'),
+                            Forms\Components\Select::make('usage_mode')
+                                ->required()
+                                ->label('Mode d\'application')
+                                ->options([
+                                    'foliaire_application' => 'Application foliaire',
+                                    'root_application' => 'Application raçinaire',
+                                ])
+                                ->default('foliaire_application'),
                             Forms\Components\TextInput::make('price')
                                 ->required()
                                 ->label('Prix')
@@ -144,7 +188,7 @@ class PreconisationResource extends Resource
                                 ->minValue(0),
                         ])
                         ->columnSpanFull()
-                        ->columns(4)
+                        ->columns(5)
 
                 ]),
 
@@ -194,7 +238,8 @@ class PreconisationResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make(),
-                PrintPreconisationAction::create(),
+                FrenchPrintPreconisationAction::create(),
+                ArabicPrintPreconisationAction::create(),
 
             ])
             ->bulkActions([

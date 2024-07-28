@@ -22,7 +22,9 @@ class PreconisationItems extends Model
         'preconisation_id',
         'unit_id',
         'intrant_id',
-        'usage_mode'
+        'usage_mode',
+        'dose',
+        'dose_ar',
     ];
 
     /**
@@ -38,6 +40,7 @@ class PreconisationItems extends Model
         'preconisation_id' => 'integer',
     ];
 
+    public $appends = ['fr_usage_mode', 'ar_usage_mode'];
     public function intrant(): BelongsTo
     {
         return $this->belongsTo(Intrant::class);
@@ -51,5 +54,31 @@ class PreconisationItems extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    public function getFrUsageModeAttribute()
+    {
+        if ($this->usage_mode === 'foliaire_application') {
+            return 'Application Foliaire';
+        }
+
+        if ($this->usage_mode === 'root_application') {
+            return 'Application raçinaire';
+        }
+
+        return $this->usage_mode;
+    }
+
+    public function getArUsageModeAttribute()
+    {
+        if ($this->usage_mode === 'foliaire_application') {
+            return 'تطبيق فولير';
+        }
+
+        if ($this->usage_mode === 'root_application') {
+            return 'تطبيق جذري';
+        }
+
+        return $this->usage_mode;
     }
 }

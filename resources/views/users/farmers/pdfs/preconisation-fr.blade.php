@@ -50,6 +50,20 @@
         .items-table th {
             background-color: #f2f2f2;
         }
+
+        .row {
+            display: flex;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 20px;
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            border: 1px solid black;
+            padding: 10px;
+        }
     </style>
 </head>
 
@@ -63,8 +77,12 @@
     <div class="customer-details">
         <table>
             <thead>
-                <th>Agriculteur</th>
-                <th>Culture</th>
+                <th>
+                    <h3>Agriculteur</h3>
+                </th>
+                <th>
+                    <h3>Culture</h3>
+                </th>
             </thead>
 
             <tr>
@@ -85,27 +103,34 @@
             <tbody>
                 <tr class="header">
                     <td>Intrant</td>
-                    <td>Prix</td>
                     <td>Qty</td>
+                    <td>Dose</td>
+                    <td>Mode d'application</td>
+                    <td>Prix</td>
                 </tr>
                 @foreach ($items as $item)
                     <tr>
-                        <td>{{ $item->intrant->name_fr }}</td>
-                        <td>{{ number_format($item->price, 2, '.', ' ') }}</td>
+                        <td><b>{{ $item->intrant->name_fr }}</b></td>
                         <td>{{ $item->quantity }}</td>
+                        <td>{{ $item->dose }}</td>
+                        <td>{{ $item->fr_usage_mode }}</td>
+                        <td>{{ number_format($item->price, 2, '.', ' ') }} DA</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
     <div>
-        <p style="  font-size: 1.2em; ">Total : {{    number_format($receipt->total_amount, 2, '.', ' ')}} DA</p>
-        <p style="  font-size: 1.2em; ">Ingénieur: {{ $receipt?->createdBy?->name }}</p>
+        <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt->total_amount, 2, '.', ' ')}} DA</p>
+        <p style="  font-size: 1.2em; "><b>Ingénieur:</b> {{ ucfirst($receipt?->createdBy?->name) }}</p>
     </div>
 
     <div>
         <h3 style="margin-bottom: 0px">Note</h3>
-        <p>{!! html_entity_decode($receipt->note)!!}</p>
+        <div class="fotter">
+
+            <p>{!! html_entity_decode($receipt->note)!!}</p>
+        </div>
     </div>
 
 </body>

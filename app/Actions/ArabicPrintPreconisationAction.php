@@ -9,14 +9,14 @@ use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 
 
-class PrintPreconisationAction
+class ArabicPrintPreconisationAction
 {
     public static function create(): Action
     {
-        return Action::make('printPreconisation')
-            ->url(fn(Model $record) => route('farmer.preconisation.print', [$record->farmer_id, $record->id]))
-            ->label('Imprimer')
-            ->color('secondary')
+        return Action::make('printPreconisation(ar)')
+            ->url(fn(Model $record) => route('farmer.preconisation-ar.print', [$record->farmer_id, $record->id]))
+            ->label('طباعة')
+            ->color('')
             ->icon('heroicon-o-printer')
             ->openUrlInNewTab();
 

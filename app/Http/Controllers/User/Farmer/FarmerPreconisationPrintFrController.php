@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\User\Preconisation;
+namespace App\Http\Controllers\User\Farmer;
 
+use App\Models\Farmer;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
-use Illuminate\Http\Request;
 use App\Models\Preconisation;
 use App\Http\Controllers\Controller;
 
-class PreconisationPrintController extends Controller
+class FarmerPreconisationPrintFrController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(Request $request, Preconisation $preconisation)
+    public function __invoke(Farmer $farmer, Preconisation $preconisation)
     {
-        $preconisation->load(['preconisationItems.intrant', 'farmer.wilaya', 'farm.culture', 'farm.unit', 'createdBy']);
-        $pdf = PDF::loadView('users.preconisations.pdfs.preconisation', [
+        $preconisation->load(['preconisationItems.intrant', 'farmer', 'farm', 'createdBy']);
+
+        $pdf = PDF::loadView('users.farmers.pdfs.preconisation-fr', [
             'receipt' => $preconisation,
             'items' => $preconisation->preconisationItems
         ]);
 
         return $pdf->stream($this->generateName($preconisation));
-    }
 
+    }
 
 
     private function generateName(Preconisation $preconisation): string

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Imports\ProductsImport;
 use Tabs\Tab;
 use Filament\Forms;
 use App\Models\Farm;
@@ -18,7 +17,9 @@ use Filament\Infolists;
 use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Imports\FarmersImport;
 use App\Models\CultureSetting;
+use App\Imports\ProductsImport;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
@@ -317,6 +318,27 @@ class FarmerResource extends Resource
                 ]),
             ])
             ->headerActions([
+                Action::make('import')
+                    ->label('Importer')
+                    ->form([
+                        Section::make('Importer')
+                            ->schema([
+                                FileUpload::make('import_file')
+                                    ->label('Importer')
+                                    ->required()
+                                    ->storeFiles(false)
+                            ])
+                    ])
+                    ->action(function (array $data) {
+                        debugbar()->info($data);
+
+                        // get file from livewire folder
+
+                        // $file = public_path('storage/livewire-tmp/' . $data['import_file']);
+
+                        Excel::import(new FarmersImport, $data['import_file']);
+
+                    }),
 
             ]);
         ;

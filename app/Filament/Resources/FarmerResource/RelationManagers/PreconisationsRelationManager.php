@@ -18,7 +18,8 @@ use Illuminate\Contracts\View\View;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Repeater;
-use App\Actions\PrintPreconisationAction;
+use App\Actions\FrenchPrintPreconisationAction;
+use App\Actions\ArabicPrintPreconisationAction;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -151,6 +152,7 @@ class PreconisationsRelationManager extends RelationManager
                                         // $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
 
                                         $set('dose', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name : 0);
+                                        $set('dose_ar', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name_ar : 0);
                                     }
 
                                 ),
@@ -160,15 +162,11 @@ class PreconisationsRelationManager extends RelationManager
                                 ->label('Quantite')
                                 ->minValue(0)
                                 ->default(1),
-                            // Forms\Components\Select::make('unit_id')
-                            //     ->required()
-                            //     ->label('Unite')
-                            //     ->options(Unit::all()->pluck('name', 'id'))
-                            //     ->default(1),
                             Forms\Components\TextInput::make('dose')
                                 ->required()
-                                ->label('Dose')
-                                ->disabled(),
+                                ->label('Dose'),
+                            Forms\Components\TextInput::make('dose_ar')
+                                ->hidden(true),
                             Forms\Components\Select::make('usage_mode')
                                 ->required()
                                 ->label('Mode d\'application')
@@ -177,16 +175,16 @@ class PreconisationsRelationManager extends RelationManager
                                     'root_application' => 'Application raçinaire',
                                 ])
                                 ->default('foliaire_application'),
-                            // Forms\Components\TextInput::make('price')
-                            //     ->required()
-                            //     ->label('Prix')
-                            //     ->default(0)
-                            //     ->numeric()
-                            //     ->suffix('DA')
-                            //     ->minValue(0),
+                            Forms\Components\TextInput::make('price')
+                                ->required()
+                                ->label('Prix')
+                                ->default(0)
+                                ->numeric()
+                                ->suffix('DA')
+                                ->minValue(0),
                         ])
                         ->columnSpanFull()
-                        ->columns(4)
+                        ->columns(5)
 
                 ]),
 
@@ -236,7 +234,8 @@ class PreconisationsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ViewAction::make(),
-                PrintPreconisationAction::create(),
+                FrenchPrintPreconisationAction::create(),
+                ArabicPrintPreconisationAction::create(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

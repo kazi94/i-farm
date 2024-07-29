@@ -21,7 +21,7 @@ use Maatwebsite\Excel\Concerns\WithProgressBar;
 class FirstSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 {
     use Importable;
-    public function collection(Collection $rows)
+     public function collection(Collection $rows)
     {
         // intrant belongs to many sousIntrantCategory
         $sousIntrantCateg = IntrantSousCategory::where('name', 'insecticides')->first();

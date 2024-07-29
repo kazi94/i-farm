@@ -196,12 +196,13 @@ class FarmResource extends Resource
                 Tables\Columns\TextColumn::make('farmer.address')
                     ->sortable()
                     ->label('Adresse'),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('culture.name')
+                    ->sortable()
+                    ->label('Culture'),
+                Tables\Columns\TextColumn::make('cultureVariante.name')
                     ->sortable()
                     ->label('Famille'),
                 Tables\Columns\TextColumn::make('cultureSetting.name')
-                    ->numeric()
                     ->sortable()
                     ->label('Paramètre de culture'),
                 Tables\Columns\TextColumn::make('area')

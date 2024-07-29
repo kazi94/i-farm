@@ -19,6 +19,7 @@ use Filament\Resources\Resource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\View\View;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Hidden;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Actions\Action;
@@ -88,6 +89,7 @@ class PreconisationResource extends Resource
                                 ->where('culture_intrant.culture_id', '=', $get('culture_id'))
                                 ->distinct()
                                 ->pluck('depredateurs.name', 'depredateurs.id')
+                                ->map(fn($val) => ucfirst($val))
                         )
                         ->live()
                         ->label('Déprédateur'),
@@ -113,9 +115,11 @@ class PreconisationResource extends Resource
                                                 ->distinct()
                                                 ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id'])
                                                 ->map(function ($intrant) {
+                                                    $description = $intrant->name_fr . ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')';
+
                                                     return [
                                                         'id' => $intrant->id,
-                                                        'description' => $intrant->name_fr . ' (' . $intrant->dose_min . ' - ' . $intrant->dose_max . ' ' . $intrant->unitName . ')',
+                                                        'description' => $description,
                                                     ];
                                                 })
                                                 ->pluck('description', 'id')
@@ -151,9 +155,9 @@ class PreconisationResource extends Resource
                                             $intrantCulture ? $intrantCulture->price : 0
                                         );
 
-                                        // $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
+                                        $set('dose', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name : 0);
+                                        $set('dose_ar', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name_ar : 0);
 
-                                        $set('dose', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name : 0);
                                     }
 
                                 ),
@@ -171,6 +175,7 @@ class PreconisationResource extends Resource
                             Forms\Components\TextInput::make('dose')
                                 ->required()
                                 ->label('Dose'),
+                            Hidden::make('dose_ar'),
                             Forms\Components\Select::make('usage_mode')
                                 ->required()
                                 ->label('Mode d\'application')

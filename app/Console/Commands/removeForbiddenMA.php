@@ -35,7 +35,7 @@ class removeForbiddenMA extends Command
         // for each name delete from DB and delete related intrants
         foreach ($data as $name) {
             $name = strtolower(trim($name));
-            $matiereActif = \App\Models\PrincipeActif::where('name_fr', 'LIKE', '%' . $name . '%')->first();
+            $matiereActif = \App\Models\PrincipeActif::where('name_fr', $name)->first();
             if ($matiereActif) {
                 $matiereActifDeletedCounter++;
                 $matiereActif->delete();

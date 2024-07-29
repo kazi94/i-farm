@@ -1,4 +1,3 @@
-INSERT INTO `units` (`name`, `name_ar`) VALUES ('ha', 'هكتار');
 INSERT INTO `units` (`name`, `name_ar`) VALUES ('uréique', 'يوريا');
 INSERT INTO `units` (`name`, `name_ar`) VALUES ('ul/mg', 'ماي / ملغ ');
 INSERT INTO `units` (`name`, `name_ar`) VALUES ('ui/mg', 'وحدة دولية / ملغ ');

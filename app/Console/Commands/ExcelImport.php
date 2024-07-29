@@ -17,8 +17,8 @@ class ExcelImport extends Command
     {
 
         $this->output->title('Starting import');
-        //(new FirstSheetImport)->withOutput($this->output)->import('intrants-2022.xlsx');
-        (new Intrants2022Import)->withOutput($this->output)->import('intrants-2022.xlsx');
+        // (new FirstSheetImport)->withOutput($this->output)->import('intrants-2022.xlsx');
+        //(new Intrants2022Import)->withOutput($this->output)->import('intrants-2022.xlsx');
 
         //(new FirstSheetImport)->withOutput($this->output)->import('intrants-2017.xlsx');
         (new Intrants2017Import)->withOutput($this->output)->import('intrants-2017.xlsx');

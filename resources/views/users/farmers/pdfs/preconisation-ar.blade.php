@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″>
-    <title>التوصية</title>
+    <title>التوصية رقم {{ $receipt->id }}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -41,6 +41,7 @@
             text-align: center;
             font-size: 1.2em;
             margin-bottom: 20px;
+            font-weight: bold;
         }
 
         .customer-details {
@@ -92,19 +93,19 @@
             <table>
                 <thead>
                     <th>
-                        <h3>الحقل</h3>
+                        <h3>المنتج</h3>
                     </th>
                     <th>
-                        <h3>المنتج</h3>
+                        <h3>الحقل</h3>
                     </th>
                 </thead>
                 <tr>
-                    <td>{{ $receipt->farmer->wilaya->name }}</td>
-                    <td><b>المساحة: </b>{{ $receipt->farm->area }} {{ $receipt->farm->unit->name }}</td>
+                    <td>{{ $receipt->farmer->fullname }}</td>
+                    <td><b>المساحة: </b>{{ $receipt->farm->area }} {{ $receipt->farm->unit->name_ar }}</td>
                 </tr>
                 <tr>
-                    <td>{{ $receipt->farmer->fullname }}</td>
-                    <td>{{ $receipt->farm->culture->name }}</td>
+                    <td> {{ $receipt->farmer->wilaya->name }}</td>
+                    <td><b>الحقل: </b>{{ $receipt->farm->culture->name }}</td>
                 </tr>
             </table>
         </div>
@@ -116,8 +117,8 @@
                     <tr class="header">
                         <td>الدواء</td>
                         <td>الكمية</td>
-                        <td>الجرع</td>
-                        <td>الطريقة الاستخدام</td>
+                        <td>الجرعة</td>
+                        <td>طريقة الاستخدام</td>
                         <td>السعر</td>
                     </tr>
                     @foreach ($items as $item)

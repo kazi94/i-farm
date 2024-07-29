@@ -16,11 +16,13 @@ use App\Models\Preconisation;
 use App\Models\IntrantCulture;
 use Illuminate\Contracts\View\View;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\Hidden;
 use Filament\Support\Enums\Alignment;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Filament\Forms\Components\Repeater;
-use App\Actions\FrenchPrintPreconisationAction;
-use App\Actions\ArabicPrintPreconisationAction;
 use Filament\Forms\Components\Actions\Action;
+use App\Actions\ArabicPrintPreconisationAction;
+use App\Actions\FrenchPrintPreconisationAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PreconisationsRelationManager extends RelationManager
@@ -86,6 +88,7 @@ class PreconisationsRelationManager extends RelationManager
                                 ->where('culture_intrant.culture_id', '=', $get('culture_id'))
                                 ->distinct()
                                 ->pluck('depredateurs.name', 'depredateurs.id')
+                                ->map(fn($val) => ucfirst($val))
                         )
                         ->live()
                         ->label('Déprédateur'),
@@ -111,9 +114,12 @@ class PreconisationsRelationManager extends RelationManager
                                                 ->distinct()
                                                 ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id'])
                                                 ->map(function ($intrant) {
+
+                                                    $description = $intrant->name_fr . ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')';
+
                                                     return [
                                                         'id' => $intrant->id,
-                                                        'description' => $intrant->name_fr . ' (' . $intrant->dose_min . ' - ' . $intrant->dose_max . ' ' . $intrant->unitName . ')',
+                                                        'description' => $description,
                                                     ];
                                                 })
                                                 ->pluck('description', 'id')
@@ -151,8 +157,8 @@ class PreconisationsRelationManager extends RelationManager
 
                                         // $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
 
-                                        $set('dose', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name : 0);
-                                        $set('dose_ar', $intrantCulture ? $intrantCulture->dose_min . ' - ' . $intrantCulture->dose_max . ' ' . $intrantCulture->unit->name_ar : 0);
+                                        $set('dose', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name : 0);
+                                        $set('dose_ar', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name_ar : 0);
                                     }
 
                                 ),
@@ -165,8 +171,7 @@ class PreconisationsRelationManager extends RelationManager
                             Forms\Components\TextInput::make('dose')
                                 ->required()
                                 ->label('Dose'),
-                            Forms\Components\TextInput::make('dose_ar')
-                                ->hidden(true),
+                            Hidden::make('dose_ar'),
                             Forms\Components\Select::make('usage_mode')
                                 ->required()
                                 ->label('Mode d\'application')

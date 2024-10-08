@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Préconisation</title>
+    <title>Préconisation N°{{ $receipt->id }}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -111,7 +111,7 @@
                 @foreach ($items as $item)
                     <tr>
                         <td><b>{{ $item->intrant->name_fr }}</b></td>
-                        <td>{{ $item->quantity }}</td>
+                        <td>{{ $item->quantity }} {{ $item->unit->name }}	</td>
                         <td>{{ $item->dose }}</td>
                         <td>{{ $item->fr_usage_mode }}</td>
                         <td>{{ number_format($item->price, 2, '.', ' ') }} DA</td>

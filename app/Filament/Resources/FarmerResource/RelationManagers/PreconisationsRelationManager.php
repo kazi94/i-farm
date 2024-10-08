@@ -59,7 +59,19 @@ class PreconisationsRelationManager extends RelationManager
                         ->default(now())
                         ->displayFormat('d/m/Y'),
                     Forms\Components\Select::make('culture_id')
-                        ->options(fn(RelationManager $livewire) => Farm::with('culture')->where('farmer_id', $livewire->getOwnerRecord()['id'])->get()->pluck('culture.name', 'culture.id'))
+                        ->options(
+                            function (RelationManager $livewire) {
+                                $farms = Farm::with('culture')
+                                    ->where('farmer_id', $livewire->getOwnerRecord()['id'])
+                                    ->get();
+                                return $farms->map(function ($farm) {
+                                    return [
+                                        'label' => $farm->name . ' - ' . $farm->culture->name,
+                                        'value' => $farm->culture_id,
+                                    ];
+                                })->pluck('label', 'value');
+                            }
+                        )
                         ->required()
                         ->live()
                         ->label('Culture')
@@ -85,13 +97,17 @@ class PreconisationsRelationManager extends RelationManager
                     Forms\Components\Select::make('depredateur_id')
                         ->options(
                             fn(Get $get) => Depredateur::join('culture_intrant', 'depredateurs.id', '=', 'culture_intrant.depredateur_id')
-                                ->where('culture_intrant.culture_id', '=', $get('culture_id'))
+                                ->when(
+                                    $get('culture_id'),
+                                    fn($query) => $query->where('culture_intrant.culture_id', $get('culture_id'))
+                                )
                                 ->distinct()
                                 ->pluck('depredateurs.name', 'depredateurs.id')
                                 ->map(fn($val) => ucfirst($val))
                         )
                         ->live()
-                        ->label('Déprédateur'),
+                        ->label('Déprédateur')
+                        ->searchable(),
                 ])->columns(4),
 
                 Forms\Components\Section::make([
@@ -102,8 +118,27 @@ class PreconisationsRelationManager extends RelationManager
                             Forms\Components\Select::make('intrant_id')
                                 ->options(
                                     function (Get $get) {
-                                        $intrants = $get('../../culture_id') ?
-                                            Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
+                                        $intrants = [];
+                                        if (!$get('../../culture_id') && $get('../../depredateur_id')) {
+
+                                            $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
+                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
+                                                ->where('culture_intrant.depredateur_id', $get('../../depredateur_id'))
+                                                ->distinct()
+                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id']);
+
+                                        }
+
+                                        if ($get('../../culture_id') && !$get('../../depredateur_id')) {
+                                            $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
+                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
+                                                ->where('culture_intrant.culture_id', $get('../../culture_id'))
+                                                ->distinct()
+                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id']);
+                                        }
+
+                                        if ($get('../../culture_id') && $get('../../depredateur_id')) {
+                                            $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
                                                 ->join('units', 'culture_intrant.unit_id', 'units.id')
                                                 ->where('culture_intrant.culture_id', $get('../../culture_id'))
                                                 ->when(
@@ -112,25 +147,31 @@ class PreconisationsRelationManager extends RelationManager
                                                     $query->where('culture_intrant.depredateur_id', $get('../../depredateur_id'))
                                                 )
                                                 ->distinct()
-                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id'])
-                                                ->map(function ($intrant) {
+                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id']);
+                                        }
 
-                                                    $description = $intrant->name_fr . ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')';
+                                        // check if intrants is empty
+                                        if (empty($intrants)) {
+                                            // retrieve all intrants 20
+                                            $intrants = Intrant::take(20)->get()->pluck('name_fr', 'id');
+                                        } else {
+                                            $intrants = collect($intrants)->map(function ($intrant) {
 
-                                                    return [
-                                                        'id' => $intrant->id,
-                                                        'description' => $description,
-                                                    ];
-                                                })
-                                                ->pluck('description', 'id')
-                                            :
-                                            Intrant::take(20)->get()->pluck('name_fr', 'id');
+                                                $description = $intrant->name_fr . ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')';
+
+                                                return [
+                                                    'id' => $intrant->id,
+                                                    'description' => $description,
+                                                ];
+                                            })
+                                                ->pluck('description', 'id');
+                                        }
+
                                         return $intrants;
                                     }
                                 )
                                 ->getSearchResultsUsing(fn(string $search, Get $get): array =>
                                     Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
-                                        ->where('culture_id', $get('../../culture_id'))
                                         ->where('name_fr', 'like', "%{$search}%")
                                         ->limit(50)
                                         ->pluck('intrants.name_fr', 'intrants.id')
@@ -168,6 +209,11 @@ class PreconisationsRelationManager extends RelationManager
                                 ->label('Quantite')
                                 ->minValue(0)
                                 ->default(1),
+                            Forms\Components\Select::make('unit_id')
+                                ->label('Unite')
+                                ->options(Unit::all()->pluck('name', 'id'))
+                                ->default(1)
+                                ->searchable(),
                             Forms\Components\TextInput::make('dose')
                                 ->required()
                                 ->label('Dose'),

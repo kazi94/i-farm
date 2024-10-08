@@ -124,7 +124,7 @@
                     @foreach ($items as $item)
                         <tr>
                             <td><b>{{ $item->intrant->name_fr }}</b></td>
-                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->quantity }} {{ $item->unit->name_ar }}</td>
                             <td>{{ $item->dose_ar }}</td>
                             <td>{{ $item->ar_usage_mode }}</td>
                             <td>{{ number_format($item->price, 2, '.', ' ') }} دج</td>

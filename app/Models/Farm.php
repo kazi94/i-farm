@@ -20,6 +20,7 @@ class Farm extends Model
         'code',
         'classification',
         'area',
+        'name',
         'unit_id',
         'culture_id',
         'culture_setting_id',
@@ -52,6 +53,7 @@ class Farm extends Model
     protected $casts = [
         'id' => 'integer',
         'area' => 'float',
+        'name' => 'string',
         'distance_tree' => 'float',
         'distance_line' => 'float',
         'n' => 'float',

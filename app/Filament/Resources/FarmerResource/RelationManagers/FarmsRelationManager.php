@@ -27,39 +27,13 @@ class FarmsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('code')
-                    ->default('FARM0000' . Farm::count() + 1)
+                TextInput::make('name')
+                    ->label('Nom')
+                    ->default('Parcelle N°' . Farm::count() + 1)
                     ->required(),
-                TextInput::make('area')
-                    ->label('Superficie')
-                    ->default(0)
-                    ->required(),
-                Select::make('unit_id')
-                    ->label('Unité')
-                    ->options(fn(Get $get) => Unit::whereIn('name', ['ha', 'mètre'])->get()->pluck('name', 'id'))
-                    ->required(),
-                TextInput::make('age')
-                    ->label('Age')
-                    ->default(0)
-                    ->suffix('ans'),
-                TextInput::make('density')
-                    ->label('Densité de la plantation')
-                    ->default(0)
-                    ->numeric()
-                    ->suffix('P/H'),
-                TextInput::make('distance_tree')
-                    ->label('Distance Arbre')
-                    ->default(0)
-                    ->numeric()
-                    ->suffix('m'),
-                TextInput::make('distance_line')
-                    ->label('Distance Ligne')
-                    ->default(0)
-                    ->numeric()
-                    ->suffix('m'),
-
                 Select::make('culture_id')
                     ->label('Culture')
+                    ->searchable()
                     ->relationship('culture', 'name')
                     ->options(Culture::all()->pluck('name', 'id'))
                     ->live()
@@ -132,6 +106,35 @@ class FarmsRelationManager extends RelationManager
                             ->options(fn(Get $get) => CultureSetting::all()->pluck('name', 'id'))
                             ->required()
                     ]),
+                TextInput::make('area')
+                    ->label('Superficie')
+                    ->default(0)
+                    ->required(),
+                Select::make('unit_id')
+                    ->label('Unité')
+                    ->searchable()
+                    ->default('ha')
+                    ->options(fn(Get $get) => Unit::whereIn('name', ['ha', 'mètre'])->get()->pluck('name', 'id'))
+                    ->required(),
+                TextInput::make('age')
+                    ->label('Age')
+                    ->default(0)
+                    ->suffix('ans'),
+                TextInput::make('density')
+                    ->label('Densité de la plantation')
+                    ->default(0)
+                    ->numeric()
+                    ->suffix('P/H'),
+                TextInput::make('distance_tree')
+                    ->label('Distance Arbre')
+                    ->default(0)
+                    ->numeric()
+                    ->suffix('m'),
+                TextInput::make('distance_line')
+                    ->label('Distance Ligne')
+                    ->default(0)
+                    ->numeric()
+                    ->suffix('m'),
                 Section::make('Besoins en unité fetilisantes')
                     ->schema([
                         TextInput::make('n')
@@ -178,10 +181,10 @@ class FarmsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('code')
+                Tables\Columns\TextColumn::make('name')
                     ->numeric()
                     ->sortable()
-                    ->label('Code'),
+                    ->label('Nom'),
                 Tables\Columns\TextColumn::make('culture.name')
                     ->sortable()
                     ->label('Famille'),

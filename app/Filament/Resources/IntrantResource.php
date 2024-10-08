@@ -9,10 +9,12 @@ use App\Models\Intrant;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\Depredateur;
 use App\Models\Distributor;
 use App\Models\IntrantCategory;
 use Filament\Resources\Resource;
 use App\Models\IntrantSousCategory;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
@@ -164,14 +166,28 @@ class IntrantResource extends Resource
 
             ])
             ->filters([
+
                 Tables\Filters\SelectFilter::make('firm_id')
                     ->label('Firme')
                     ->options(Firm::all()->pluck('name', 'id'))
                     ->multiple(),
-                Tables\Filters\SelectFilter::make('distributor_id')
-                    ->label('Représentant')
-                    ->options(Distributor::all()->pluck('name', 'id'))
-                    ->multiple(),
+                Filter::make('depredateur_id')
+                    ->form([
+                        Select::make('depredateur_id')
+                            ->label('Dépredateur')
+                            ->options(Depredateur::all()->pluck('name', 'id'))
+                            ->multiple()
+                            ->searchable(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when(
+                            $data['depredateur_id'],
+                            fn(Builder $query): Builder =>
+                            $query->whereRelation('intrantsCultures', 'depredateur_id', $data['depredateur_id'])
+
+                        );
+                    }),
+
                 Tables\Filters\SelectFilter::make('intrant_category_id')
                     ->label('Catégorie')
                     ->options(IntrantCategory::all()->pluck('name', 'id'))

@@ -21,98 +21,137 @@ use Maatwebsite\Excel\Concerns\WithProgressBar;
 class FirstSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 {
     use Importable;
-     public function collection(Collection $rows)
+    public function collection(Collection $rows)
     {
         // intrant belongs to many sousIntrantCategory
         $sousIntrantCateg = IntrantSousCategory::where('name', 'insecticides')->first();
         $prevIntrant = null;
         foreach ($rows as $row) {
-            $intrant = strtolower($row['nom_commercial']);
-            $principesAc = strtolower($row['matiere_active']);
-            $concentrations = strtolower($row['concentration']);
-            $formulation = $row['formulation'];
-            $depredateurs = strtolower($row['depredateurs']);
-            $cultures = strtolower($row['cultures']);
-            $dosesUnit = strtolower($row['doses_dutilisation']);
-            $dar = $row['dar'];
-            $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
-            $n_dhomologation = $row['n_dhomologation'];
-            $firme = rtrim(strtolower($row['firmes']), '.');
-            $representant = strtolower($row['representant']);
-            // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
-            if (is_null($prevIntrant) || strcmp($intrant, strtolower($prevIntrant->name_fr)) !== 0) {
+            $cultures[] = strtolower($row['cultures']);
+
+            //     $intrant = strtolower($row['nom_commercial']);
+            //     $principesAc = strtolower($row['matiere_active']);
+            //     $concentrations = strtolower($row['concentration']);
+            //     $formulation = $row['formulation'];
+            //     $depredateurs = strtolower($row['depredateurs']);
+            //     $cultures = strtolower($row['cultures']);
+            //     $dosesUnit = strtolower($row['doses_dutilisation']);
+            //     $dar = $row['dar'];
+            //     $observation = $row['observation'] && $row['observation'] != ' ' ? $row['observation'] : null;
+            //     $n_dhomologation = $row['n_dhomologation'];
+            //     $firme = rtrim(strtolower($row['firmes']), '.');
+            //     $representant = strtolower($row['representant']);
+            //     // Check if the current intrant is different from the previous intrant to avoid intrant duplicates
+            //     if (is_null($prevIntrant) || strcmp($intrant, strtolower($prevIntrant->name_fr)) !== 0) {
 
 
-                // intrant belongs to firme, check if the firm exists then return id
-                $firme = $firme ? $this->getOrCreateFirm($firme) : null;
+            //         // intrant belongs to firme, check if the firm exists then return id
+            //         $firme = $firme ? $this->getOrCreateFirm($firme) : null;
 
-                // intrant belongs to distributeur, check if the distributeur exists then return id
-                $representant = $representant ? $this->getOrCreateDistributeur($representant) : null;
+            //         // intrant belongs to distributeur, check if the distributeur exists then return id
+            //         $representant = $representant ? $this->getOrCreateDistributeur($representant) : null;
 
-                if ($firme && $representant)
-                    $representant->firms()->attach($firme); // representant belongs to many firms
+            //         if ($firme && $representant)
+            //             $representant->firms()->attach($firme); // representant belongs to many firms
 
-                // Get or create the intrant
-                $intrant = $this->getOrCreateIntrant($intrant, $sousIntrantCateg, $formulation, $n_dhomologation, $firme, $representant);
+            //         // Get or create the intrant
+            //         $intrant = $this->getOrCreateIntrant($intrant, $sousIntrantCateg, $formulation, $n_dhomologation, $firme, $representant);
 
-                // Attach intrnat to Principes Actifs
-                $this->attachPrincipesActifs($intrant, $principesAc, $concentrations);
+            //         // Attach intrnat to Principes Actifs
+            //         $this->attachPrincipesActifs($intrant, $principesAc, $concentrations);
 
-            } else {
-                $intrant = $prevIntrant;
+            //     } else {
+            //         $intrant = $prevIntrant;
+            //     }
+
+            //     // depredateurs is a string seperated by '/'
+            //     $depredateurs = explode('/', $depredateurs);
+
+            //     // cultures is a string seperated by '/'
+            //     $cultures = explode('/', $cultures);
+
+            //     // doses is a string seperated by ' ' the first one is the value and the second one is the unit
+            //     $dosesUnit = explode(' ', $dosesUnit);
+
+            //     // doses is a string seperated by '-'
+            //     $doses = explode('-', $dosesUnit[0]);
+            //     $unit = isset($dosesUnit[1]) ? $dosesUnit[1] : null;
+
+            //     // dar is a string seperated by '-'
+
+            //     $dar = explode('-', $dar);
+
+
+
+
+            //     foreach ($depredateurs as $depredateur) {
+
+            //         $depredateur = $this->getOrCreateDepredateur($depredateur); // get or create the depredateur
+
+            //         foreach ($cultures as $key => $culture) {
+
+            //             $culture = $this->getOrCreateCulture($culture); // get or create the culture
+
+            //             $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
+            //             $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
+
+            //             $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
+            //             $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
+
+
+            //             $intrant->intrantsCultures()->create(
+            //                 [
+            //                     'culture_id' => $culture->id,
+            //                     'depredateur_id' => $depredateur->id,
+            //                     'dose_min' => $doseMin,
+            //                     'dose_max' => $doseMax,
+            //                     'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
+            //                     'dar_min' => $darMin,
+            //                     'dar_max' => $darMax,
+            //                     'observation' => $observation,
+            //                 ]
+            //             );
+            //         }
+            //     }
+
+            //     $prevIntrant = $intrant; // intrant is an ORM object
+        }
+        $tmpCulture = [];
+        // for each culture get culture seperated by '/'
+        foreach ($cultures as $value) {
+            // retrieve words seperated by '/'
+            $words = explode('/', $value);
+            foreach ($words as $word) {
+
+                $tmpCulture[] = strtolower($word);
             }
+        }
 
-            // depredateurs is a string seperated by '/'
-            $depredateurs = explode('/', $depredateurs);
+        $tmpCulture = array_unique($tmpCulture);
 
-            // cultures is a string seperated by '/'
-            $cultures = explode('/', $cultures);
+        sort($tmpCulture);
 
-            // doses is a string seperated by ' ' the first one is the value and the second one is the unit
-            $dosesUnit = explode(' ', $dosesUnit);
+        //var_dump($tmpCulture);
+        // write in to test.json file
+        $json = json_encode($tmpCulture, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-            // doses is a string seperated by '-'
-            $doses = explode('-', $dosesUnit[0]);
-            $unit = isset($dosesUnit[1]) ? $dosesUnit[1] : null;
+        // if the file is not empty then append it else create it
+        if (file_exists(database_path('data/cultures.json'))) {
+            // loop through the data in the file
+            $data = file_get_contents(database_path('data/cultures.json'));
 
-            // dar is a string seperated by '-'
+            $data = json_decode($data, true);
 
-            $dar = explode('-', $dar);
+            $data = array_merge($data, $tmpCulture);
 
+            $data = array_unique($data);
+            sort($data);
 
+            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-
-            foreach ($depredateurs as $depredateur) {
-
-                $depredateur = $this->getOrCreateDepredateur($depredateur); // get or create the depredateur
-
-                foreach ($cultures as $key => $culture) {
-
-                    $culture = $this->getOrCreateCulture($culture); // get or create the culture
-
-                    $doseMin = isset($doses[0]) ? floatval(str_replace(',', '.', $doses[0])) : null;
-                    $doseMax = isset($doses[1]) ? floatval(str_replace(',', '.', $doses[1])) : floatval(str_replace(',', '.', $doses[0]));
-
-                    $darMin = isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null;
-                    $darMax = isset($dar[1]) ? $dar[1] : (isset($dar[0]) && $dar[0] !== '' ? $dar[0] : null);
-
-
-                    $intrant->intrantsCultures()->create(
-                        [
-                            'culture_id' => $culture->id,
-                            'depredateur_id' => $depredateur->id,
-                            'dose_min' => $doseMin,
-                            'dose_max' => $doseMax,
-                            'unit_id' => $unit ? $this->getOrCreateUnit($unit)->id : null,
-                            'dar_min' => $darMin,
-                            'dar_max' => $darMax,
-                            'observation' => $observation,
-                        ]
-                    );
-                }
-            }
-
-            $prevIntrant = $intrant; // intrant is an ORM object
+            file_put_contents(database_path('data/cultures.json'), $json);
+        } else {
+            file_put_contents(database_path('data/cultures.json'), $json);
         }
 
 
@@ -190,30 +229,45 @@ class FirstSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
 
     }
 
-    // Function to get or create a firme
-    private function getOrCreateFirm($firme)
+    /**
+     * Function to get or create a firm
+     *
+     * @param string|null $firmName The name of the firm
+     * @return Firm|null The firm object or null if $firmName is null
+     */
+    private function getOrCreateFirm(?string $firmName): ?Firm
     {
-        $firme = strtolower(trim($firme));
-
-        // remove speciale character for example 'algérie' to 'algerie'
-        $firmeUp = preg_replace('/[^A-Za-z0-9\-]/', '', $firme);
-
-        // retrieve firme from database
-        $dbFirm = Firm::where('name', $firme)->first();
-
-        if ($dbFirm) {
-            $dbFirm->name = preg_replace('/[^A-Za-z0-9\-]/', '', $dbFirm->name);
-
-            if ($firmeUp == $dbFirm->name) { // check if the name of the firme in the database is the same as the name of the firme in the excel
-                return $dbFirm;
-            }
-
+        // Check if the firm name is null
+        if (is_null($firmName)) {
+            // If it is null, return null
+            return null;
         }
 
-        // create firme in database
-        return Firm::firstOrCreate(['name' => $firme], ['name' => $firme]);
+        // Trim and convert the firm name to lowercase
+        $firmName = strtolower(trim($firmName));
 
+        // Remove any non-alphanumeric or hyphen characters from the firm name
+        $cleanFirmName = preg_replace('/[^A-Za-z0-9\-]/', '', $firmName);
 
+        // Retrieve the firm from the database by its name
+        $firm = Firm::where('name', $firmName)->first();
+
+        if ($firm) {
+            // If the firm already exists in the database, clean its name and compare it with the clean firm name
+            $cleanFirmNameDb = preg_replace('/[^A-Za-z0-9\-]/', '', $firm->name);
+            if ($cleanFirmName === $cleanFirmNameDb) {
+                // If the clean names match, return the firm object
+                return $firm;
+            }
+        }
+
+        // If the firm does not exist in the database or its name has changed, create a new firm object
+        return Firm::firstOrCreate(
+            // The attributes of the new firm object
+            ['name' => $firmName],
+            // The initial values for the attributes of the new firm object
+            ['name' => $firmName]
+        );
     }
 
     // Function to get or create an intrant

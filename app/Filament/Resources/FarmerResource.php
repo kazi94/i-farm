@@ -257,12 +257,6 @@ class FarmerResource extends Resource
                     ->label('Adresse')
                     ->searchable()
                     ->limit(20),
-                Tables\Columns\TextColumn::make('phone1')
-                    ->label('Portable 1')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('phone2')
-                    ->label('Portable 2')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('website')
                     ->label('Site Web')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -333,9 +327,9 @@ class FarmerResource extends Resource
                         debugbar()->info($data);
 
                         // get file from livewire folder
-
+            
                         // $file = public_path('storage/livewire-tmp/' . $data['import_file']);
-
+            
                         Excel::import(new FarmersImport, $data['import_file']);
 
                     }),

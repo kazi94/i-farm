@@ -27,9 +27,12 @@ class FarmsRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                TextInput::make('code')
+                    ->default('FARM0000' . Farm::count() + 1)
+                    ->readOnly(),
                 TextInput::make('name')
                     ->label('Nom')
-                    ->default('Parcelle N°' . Farm::count() + 1)
+                    ->default('Parcelle N°' . Farm::count())
                     ->required(),
                 Select::make('culture_id')
                     ->label('Culture')
@@ -37,7 +40,11 @@ class FarmsRelationManager extends RelationManager
                     ->relationship('culture', 'name')
                     ->options(Culture::all()->pluck('name', 'id'))
                     ->live()
+
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Veuillez choisir une culture',
+                    ])
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
                             ->label('Culture')
@@ -52,6 +59,9 @@ class FarmsRelationManager extends RelationManager
                     ->hidden(fn(Get $get) => !$get('culture_id'))
                     ->options(fn(Get $get) => CultureSetting::where('culture_id', $get('culture_id'))->pluck('name', 'id')->toArray())
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Veuillez choisir un paramètre de culture',
+                    ])
                     ->live()
                     ->relationship('cultureSetting', 'name', fn(Builder $query, Get $get) => $query->where('culture_id', $get('culture_id')))
                     ->createOptionForm([
@@ -87,6 +97,9 @@ class FarmsRelationManager extends RelationManager
                     ->hidden(fn(Get $get) => !$get('culture_setting_id'))
                     // ->options(fn(Get $get) => CultureVariante::where('culture_setting_id', $get('culture_setting_id'))->pluck('name', 'id')->toArray())
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Veuillez choisir une variété',
+                    ])
                     ->relationship('cultureVariante', 'name', fn(Builder $query, Get $get) => $query->where('culture_setting_id', $get('culture_setting_id')))
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
@@ -109,16 +122,20 @@ class FarmsRelationManager extends RelationManager
                 TextInput::make('area')
                     ->label('Superficie')
                     ->default(0)
+                    ->numeric()
                     ->required(),
                 Select::make('unit_id')
                     ->label('Unité')
                     ->searchable()
-                    ->default('ha')
                     ->options(fn(Get $get) => Unit::whereIn('name', ['ha', 'mètre'])->get()->pluck('name', 'id'))
-                    ->required(),
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'Ce champ est requis',
+                    ]),
                 TextInput::make('age')
                     ->label('Age')
                     ->default(0)
+                    ->numeric()
                     ->suffix('ans'),
                 TextInput::make('density')
                     ->label('Densité de la plantation')
@@ -135,6 +152,11 @@ class FarmsRelationManager extends RelationManager
                     ->default(0)
                     ->numeric()
                     ->suffix('m'),
+                TextInput::make('number_of_feet')
+                    ->label('Nombre de pieds')
+                    ->default(0)
+                    ->numeric()
+                    ->suffix('pieds'),
                 Section::make('Besoins en unité fetilisantes')
                     ->schema([
                         TextInput::make('n')
@@ -202,7 +224,8 @@ class FarmsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                // ->modalWidth('8xl')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

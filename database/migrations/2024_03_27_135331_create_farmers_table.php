@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('farmers', function (Blueprint $table) {
             $table->id();
             $table->string('code', 50);
-            $table->string('fullname', 200)->index()->unique();
+            $table->string('fullname', 200)->index();
             $table->string('address', 100)->nullable();
             $table->string('phone1', 100)->nullable();
             $table->string('phone2', 100)->nullable();

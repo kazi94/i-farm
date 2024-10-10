@@ -23,6 +23,7 @@ class PreconisationItems extends Model
         'unit_id',
         'intrant_id',
         'usage_mode',
+        'ar_usage_mode',
         'dose',
         'dose_ar',
     ];

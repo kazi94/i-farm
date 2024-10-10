@@ -11,7 +11,7 @@ class FarmerPreconisationPrintFrController extends Controller
 {
     public function __invoke(Farmer $farmer, Preconisation $preconisation)
     {
-        $rest = $preconisation->load([
+        $preconisation = $preconisation->load([
             'preconisationItems.intrant',
             'farmer',
             'farm',
@@ -19,7 +19,7 @@ class FarmerPreconisationPrintFrController extends Controller
             'preconisationItems.unit',
             'preconisationItems.intrant.intrantsCultures.depredateur',
         ]);
-        $rest = [
+        $preconisation = [
             'id' => $preconisation->id,
             'date_preconisation' => $preconisation->date_preconisation,
             'total_amount' => $preconisation->total_amount,
@@ -53,12 +53,11 @@ class FarmerPreconisationPrintFrController extends Controller
                 ];
             })->values()->toArray(),
         ];
-        return view('users.farmers.pdfs.preconisation-fr', [
-            'receipt' => $rest,
-        ]);
+        // return view('users.farmers.pdfs.preconisation-fr', [
+        //     'receipt' => $rest,
+        // ]);
         $pdf = PDF::loadView('users.farmers.pdfs.preconisation-fr', [
             'receipt' => $preconisation,
-            'items' => $preconisation->preconisationItems
         ]);
 
         return $pdf->stream($this->generateName($preconisation));
@@ -66,8 +65,8 @@ class FarmerPreconisationPrintFrController extends Controller
     }
 
 
-    private function generateName(Preconisation $preconisation): string
+    private function generateName(array $preconisation): string
     {
-        return "preconisation-{$preconisation->farmer->fullname}-{$preconisation->preconisation_date}.pdf";
+        return "preconisation-{$preconisation['farmer']['fullname']}-{$preconisation['date_preconisation']}.pdf";
     }
 }

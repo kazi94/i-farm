@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″>
-    <title>التوصية رقم {{ $receipt->id }}</title>
+    <title>التوصية رقم {{ $receipt['id'] }}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -85,8 +85,8 @@
 
     <div class="main">
         <div class="header">
-            <h1>التوصية رقم {{ $receipt->id }}</h1>
-            <p>{{ $receipt->preconisation_date}}</p>
+            <h1>التوصية رقم {{ $receipt['id'] }}</h1>
+            <p>{{ $receipt['date_preconisation']}}</p>
         </div>
 
         <div class="customer-details">
@@ -100,12 +100,15 @@
                     </th>
                 </thead>
                 <tr>
-                    <td>{{ $receipt->farmer->fullname }}</td>
-                    <td><b>المساحة: </b>{{ $receipt->farm->area }} {{ $receipt->farm->unit->name_ar }}</td>
+                    <td>{{ $receipt['farmer']->fullname }}</td>
+                    <td>
+                        <b>المساحة: </b>
+                        {{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}
+                    </td>
                 </tr>
                 <tr>
-                    <td> {{ $receipt->farmer->wilaya->name }}</td>
-                    <td><b>الحقل: </b>{{ $receipt->farm->culture->name }}</td>
+                    <td> {{ $receipt['farmer']->wilaya->name }}</td>
+                    <td><b>الحقل: </b>{{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}</td>
                 </tr>
             </table>
         </div>
@@ -131,8 +134,8 @@
                                 <b>{{ $item['depredateur']['name'] }}</b>
                             </td>
                         @endif
-                        <td>{{ $intrantCulture['intrant']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name']  ?? '/'}}</td>
+                        <td><b>{{ $intrantCulture['intrant']  ?? '/'}}</b></td>
+                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name_ar']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['dose_ar']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
                         <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} دج</td>
@@ -152,7 +155,7 @@
             <h3 style="margin-bottom: 0px">ملاحظات</h3>
             <div class="fotter">
 
-                <p>{!! html_entity_decode($receipt->note)!!}</p>
+                <p>{!! html_entity_decode($receipt['note'])!!}</p>
             </div>
         </div>
     </div>

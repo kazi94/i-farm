@@ -11,7 +11,7 @@ class FarmerPreconisationPrintArController extends Controller
 {
     public function __invoke(Farmer $farmer, Preconisation $preconisation)
     {
-        $rest = $preconisation->load([
+        $preconisation = $preconisation->load([
             'preconisationItems.intrant',
             'farmer',
             'farm',
@@ -19,7 +19,7 @@ class FarmerPreconisationPrintArController extends Controller
             'preconisationItems.unit',
             'preconisationItems.intrant.intrantsCultures.depredateur',
         ]);
-        $rest = [
+        $preconisation = [
             'id' => $preconisation->id,
             'date_preconisation' => $preconisation->date_preconisation,
             'total_amount' => $preconisation->total_amount,
@@ -35,9 +35,9 @@ class FarmerPreconisationPrintArController extends Controller
                     ],
                     'traitments' => [
                         [
-                            'intrant' => $item->intrant->name_ar,
+                            'intrant' => $item->intrant->name_fr,
                             'dose_ar' => $item->dose_ar,
-                            'usage_mode' => $item->usage_mode,
+                            'usage_mode' => $item->ar_usage_mode,
                             'price' => $item->price,
                             'unit' => $item->unit,
                             'quantity' => $item->quantity,
@@ -53,26 +53,20 @@ class FarmerPreconisationPrintArController extends Controller
                 ];
             })->values()->toArray(),
         ];
-        return view('users.farmers.pdfs.preconisation-fr', [
-            'receipt' => $rest,
-        ]);
-        // $pdf = PDF::loadView('users.farmers.pdfs.preconisation-ar', [
-        //     'receipt' => $preconisation,
-        //     'items' => $preconisation->preconisationItems
-        // ]);
-
-        // return $pdf->stream($this->generateName($preconisation));
-
         return view('users.farmers.pdfs.preconisation-ar', [
             'receipt' => $preconisation,
-            'items' => $preconisation->preconisationItems
         ]);
+        $pdf = PDF::loadView('users.farmers.pdfs.preconisation-ar', [
+            'receipt' => $preconisation,
+        ]);
+
+        return $pdf->stream($this->generateName($preconisation));
 
     }
 
 
-    private function generateName(Preconisation $preconisation): string
+    private function generateName(array $preconisation): string
     {
-        return "preconisation-{$preconisation->farmer->fullname}-{$preconisation->preconisation_date}.pdf";
+        return "preconisation-{$preconisation['farmer']['fullname']}-{$preconisation['date_preconisation']}.pdf";
     }
 }

@@ -5,13 +5,13 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
 
     <div class="justify-end flex gap-2">
-        <x-filament::button onclick="openGoogleMap()" color="green">
+        <x-filament::button onclick="openGoogleMap()" color="success" icon="heroicon-s-arrow-top-right-on-square">
             Direction
         </x-filament::button>
-        <x-filament::button onclick="changeToSattelite()" color="gray">
+        <x-filament::button onclick="changeToSattelite()" color="gray" icon="heroicon-s-globe-asia-australia">
             Satellite
         </x-filament::button>
-        <x-filament::button onclick="changeToMap()" color="info">
+        <x-filament::button onclick="changeToMap()" color="info" icon="heroicon-s-map">
             map
         </x-filament::button>
     </div>
@@ -20,7 +20,7 @@
 
 
 
-        <div id="map" style="height: 360px;"></div>
+        <div id="map" style="height: 540px;"></div>
 
     </div>
 

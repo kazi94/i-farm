@@ -235,7 +235,7 @@ class PreconisationsRelationManager extends RelationManager
                                 ->minValue(0),
                         ])
                         ->columnSpanFull()
-                        ->columns(5)
+                        ->columns(6)
 
                 ]),
 
@@ -271,7 +271,7 @@ class PreconisationsRelationManager extends RelationManager
                     ->multiple(),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->modalWidth(MaxWidth::FiveExtraLarge)
+                Tables\Actions\CreateAction::make()->modalWidth('8xl')
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['created_by'] = auth()->id();
                         $data['farm_id'] = Farm::where('culture_id', $data['culture_id'])->get()->first()->id;

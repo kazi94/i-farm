@@ -31,6 +31,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Tables\Columns\ImageColumn;
@@ -69,7 +70,9 @@ class FarmerResource extends Resource
                                     ->maxLength(200)
                                     ->placeholder('Mohamed Ali')
                                     ->columnSpan(2)
-                                    ->unique('farmers', 'fullname', null, true)
+                                    ->unique(modifyRuleUsing: function (Unique $rule) {
+                                        return $rule->whereNull('deleted_at');
+                                    }, ignoreRecord: true)
                                     ->validationMessages([
                                         'unique' => 'Ce nom existe déja',
                                     ]),
@@ -327,9 +330,9 @@ class FarmerResource extends Resource
                         debugbar()->info($data);
 
                         // get file from livewire folder
-            
+
                         // $file = public_path('storage/livewire-tmp/' . $data['import_file']);
-            
+
                         Excel::import(new FarmersImport, $data['import_file']);
 
                     }),

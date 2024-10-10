@@ -115,28 +115,37 @@
 
                 <tbody>
                     <tr class="header">
+                        <td>المرض</td>
                         <td>الدواء</td>
                         <td>الكمية</td>
                         <td>الجرعة</td>
                         <td>طريقة الاستخدام</td>
                         <td>السعر</td>
                     </tr>
-                    @foreach ($items as $item)
-                        <tr>
-                            <td><b>{{ $item->intrant->name_fr }}</b></td>
-                            <td>{{ $item->quantity }} {{ $item->unit->name_ar }}</td>
-                            <td>{{ $item->dose_ar }}</td>
-                            <td>{{ $item->ar_usage_mode }}</td>
-                            <td>{{ number_format($item->price, 2, '.', ' ') }} دج</td>
-                        </tr>
-                    @endforeach
+
+            @foreach ($receipt['preconisationItems'] as $item)
+               @foreach ($item['traitments'] as $intrantCulture )
+                    <tr>
+                        @if ($loop->index == 0)
+                            <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif>
+                                <b>{{ $item['depredateur']['name'] }}</b>
+                            </td>
+                        @endif
+                        <td>{{ $intrantCulture['intrant']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['dose_ar']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
+                        <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} دج</td>
+                    </tr>
+                @endforeach
+            @endforeach
                 </tbody>
             </table>
         </div>
         <div>
-            <p style="  font-size: 1.2em; "><b>المجموع:</b> {{number_format($receipt->total_amount, 2, '.', ' ')}} دج
+            <p style="  font-size: 1.2em; "><b>المجموع:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} دج
             </p>
-            <p style="  font-size: 1.2em; "><b>المهندس:</b> {{ ucfirst($receipt?->createdBy?->name) }}</p>
+            <p style="  font-size: 1.2em; "><b>المهندس:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
         </div>
 
         <div>

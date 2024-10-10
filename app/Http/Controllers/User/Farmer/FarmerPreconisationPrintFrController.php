@@ -11,8 +11,51 @@ class FarmerPreconisationPrintFrController extends Controller
 {
     public function __invoke(Farmer $farmer, Preconisation $preconisation)
     {
-        $preconisation->load(['preconisationItems.intrant', 'farmer', 'farm', 'createdBy', 'preconisationItems.unit']);
-
+        $rest = $preconisation->load([
+            'preconisationItems.intrant',
+            'farmer',
+            'farm',
+            'createdBy',
+            'preconisationItems.unit',
+            'preconisationItems.intrant.intrantsCultures.depredateur',
+        ]);
+        $rest = [
+            'id' => $preconisation->id,
+            'date_preconisation' => $preconisation->date_preconisation,
+            'total_amount' => $preconisation->total_amount,
+            'note' => $preconisation->note,
+            'createdBy' => $preconisation->createdBy,
+            'farmer' => $preconisation->farmer,
+            'farm' => $preconisation->farm,
+            'preconisationItems' => $preconisation->preconisationItems->map(function ($item) use ($preconisation) {
+                return [
+                    'depredateur' => [
+                        'id' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->id,
+                        'name' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->name,
+                    ],
+                    'traitments' => [
+                        [
+                            'intrant' => $item->intrant->name_fr,
+                            'dose' => $item->dose,
+                            'usage_mode' => $item->usage_mode,
+                            'price' => $item->price,
+                            'unit' => $item->unit,
+                            'quantity' => $item->quantity,
+                        ],
+                    ],
+                ];
+            })->groupBy('depredateur.id')->map(function ($items) {
+                return [
+                    'depredateur' => $items->first()['depredateur'],
+                    'traitments' => $items->flatMap(function ($item) {
+                        return $item['traitments'];
+                    })->values()->toArray(),
+                ];
+            })->values()->toArray(),
+        ];
+        return view('users.farmers.pdfs.preconisation-fr', [
+            'receipt' => $rest,
+        ]);
         $pdf = PDF::loadView('users.farmers.pdfs.preconisation-fr', [
             'receipt' => $preconisation,
             'items' => $preconisation->preconisationItems

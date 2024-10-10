@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Préconisation N°{{ $receipt->id }}</title>
+    <title>Préconisation N°{{ $receipt['id']}}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -70,8 +71,8 @@
 <body>
 
     <div class="header">
-        <h1>Préconisation #{{ $receipt->id }}</h1>
-        <p>{{ $receipt->preconisation_date}}</p>
+        <h1>Préconisation #{{ $receipt['id'] }}</h1>
+        <p>{{ $receipt['date_preconisation']}}</p>
     </div>
 
     <div class="customer-details">
@@ -86,13 +87,13 @@
             </thead>
 
             <tr>
-                <td>{{ $receipt->farmer->fullname }}</td>
-                <td>{{ $receipt->farm->culture->name }}</td>
+                <td>{{ $receipt['farmer']->fullname }}</td>
+                <td>{{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}</td>
             </tr>
 
             <tr>
-                <td>{{ $receipt->farmer->wilaya->name }}</td>
-                <td><b>Superficie:</b>{{ $receipt->farm->area }} {{ $receipt->farm->unit->name }}</td>
+                <td>{{ $receipt['farmer']->wilaya->name }}</td>
+                <td><b>Superficie:</b>{{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}</td>
             </tr>
         </table>
     </div>
@@ -100,36 +101,47 @@
     <div class="items-table">
         <table style="overflow: hidden;">
 
-            <tbody>
+            <thead>
                 <tr class="header">
+                    <td>Depredateur</td>
                     <td>Intrant</td>
                     <td>Qty</td>
                     <td>Dose</td>
                     <td>Mode d'application</td>
                     <td>Prix</td>
                 </tr>
-                @foreach ($items as $item)
+            </thead>
+            <tbody>
+
+            @foreach ($receipt['preconisationItems'] as $item)
+               @foreach ($item['traitments'] as $intrantCulture )
                     <tr>
-                        <td><b>{{ $item->intrant->name_fr }}</b></td>
-                        <td>{{ $item->quantity }} {{ $item->unit->name }}	</td>
-                        <td>{{ $item->dose }}</td>
-                        <td>{{ $item->fr_usage_mode }}</td>
-                        <td>{{ number_format($item->price, 2, '.', ' ') }} DA</td>
+                        @if ($loop->index == 0)
+                            <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif>
+                                <b>{{ $item['depredateur']['name'] }}</b>
+                            </td>
+                        @endif
+                        <td>{{ $intrantCulture['intrant']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['dose']  ?? '/'}}</td>
+                        <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
+                        <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} DA</td>
                     </tr>
                 @endforeach
+            @endforeach
             </tbody>
         </table>
     </div>
     <div>
-        <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt->total_amount, 2, '.', ' ')}} DA</p>
-        <p style="  font-size: 1.2em; "><b>Ingénieur:</b> {{ ucfirst($receipt?->createdBy?->name) }}</p>
+        <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} DA</p>
+        <p style="  font-size: 1.2em; "><b>Ingénieur:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
     </div>
 
     <div>
         <h3 style="margin-bottom: 0px">Note</h3>
         <div class="fotter">
 
-            <p>{!! html_entity_decode($receipt->note)!!}</p>
+            <p>{!! html_entity_decode($receipt['note'])!!}</p>
         </div>
     </div>
 

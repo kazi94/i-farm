@@ -123,7 +123,7 @@
                         <td>الكمية</td>
                         <td>الجرعة</td>
                         <td>طريقة الاستخدام</td>
-                        <td>السعر</td>
+                        {{-- <td>السعر</td> --}}
                     </tr>
 
             @foreach ($receipt['preconisationItems'] as $item)
@@ -138,7 +138,7 @@
                         <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name_ar']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['dose_ar']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
-                        <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} دج</td>
+                        {{-- <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} دج</td> --}}
                     </tr>
                 @endforeach
             @endforeach
@@ -146,7 +146,7 @@
             </table>
         </div>
         <div>
-            <p style="  font-size: 1.2em; "><b>المجموع:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} دج
+            {{-- <p style="  font-size: 1.2em; "><b>المجموع:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} دج --}}
             </p>
             <p style="  font-size: 1.2em; "><b>المهندس:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
         </div>

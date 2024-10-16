@@ -153,7 +153,7 @@ class PreconisationsRelationManager extends RelationManager
                                         // check if intrants is empty
                                         if (empty($intrants)) {
                                             // retrieve all intrants 20
-                                            $intrants = Intrant::take(20)->get()->pluck('name_fr', 'id');
+                                            $intrants = Intrant::take(value: 50)->get()->pluck('name_fr', 'id');
                                         } else {
                                             $intrants = collect($intrants)->map(function ($intrant) {
 
@@ -226,16 +226,16 @@ class PreconisationsRelationManager extends RelationManager
                                     'root_application' => 'Application raçinaire',
                                 ])
                                 ->default('foliaire_application'),
-                            Forms\Components\TextInput::make('price')
-                                ->required()
-                                ->label('Prix')
-                                ->default(0)
-                                ->numeric()
-                                ->suffix('DA')
-                                ->minValue(0),
+                            // Forms\Components\TextInput::make('price')
+                            //     ->required()
+                            //     ->label('Prix')
+                            //     ->default(0)
+                            //     ->numeric()
+                            //     ->suffix('DA')
+                            //     ->minValue(0),
                         ])
                         ->columnSpanFull()
-                        ->columns(6)
+                        ->columns(5)
 
                 ]),
 

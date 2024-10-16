@@ -108,7 +108,7 @@
                     <td>Qty</td>
                     <td>Dose</td>
                     <td>Mode d'application</td>
-                    <td>Prix</td>
+                    {{-- <td>Prix</td> --}}
                 </tr>
             </thead>
             <tbody>
@@ -125,7 +125,7 @@
                         <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['dose']  ?? '/'}}</td>
                         <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
-                        <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} DA</td>
+                        {{-- <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} DA</td> --}}
                     </tr>
                 @endforeach
             @endforeach
@@ -133,7 +133,7 @@
         </table>
     </div>
     <div>
-        <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} DA</p>
+        {{-- <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} DA</p> --}}
         <p style="  font-size: 1.2em; "><b>Ingénieur:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
     </div>
 

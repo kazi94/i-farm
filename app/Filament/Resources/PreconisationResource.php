@@ -226,16 +226,16 @@ class PreconisationResource extends Resource
                                     'root_application' => 'Application raçinaire',
                                 ])
                                 ->default('foliaire_application'),
-                            Forms\Components\TextInput::make('price')
-                                ->required()
-                                ->label('Prix')
-                                ->default(0)
-                                ->numeric()
-                                ->suffix('DA')
-                                ->minValue(0),
+                            // Forms\Components\TextInput::make('price')
+                            //     ->required()
+                            //     ->label('Prix')
+                            //     ->default(0)
+                            //     ->numeric()
+                            //     ->suffix('DA')
+                            //     ->minValue(0),
                         ])
                         ->columnSpanFull()
-                        ->columns(5)
+                        ->columns(4)
 
                 ]),
 

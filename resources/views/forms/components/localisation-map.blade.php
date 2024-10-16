@@ -29,7 +29,10 @@
 
 
 <script>
-    var map = L.map('map').setView([34.87461822652609, -1.3095474251895214], 13);
+        var latitude = @js($getRecord()->latitude ?? 34.87461822652609);
+    var longitude = @js($getRecord()->longitude ?? -1.3095474251895214);
+    var map = L.map('map').setView([latitude, longitude], 13);
+
 
 
 

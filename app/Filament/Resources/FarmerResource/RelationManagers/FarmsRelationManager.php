@@ -32,7 +32,7 @@ class FarmsRelationManager extends RelationManager
                     ->readOnly(),
                 TextInput::make('name')
                     ->label('Nom')
-                    ->default('Parcelle N°' . Farm::count())
+                    ->default('Parcelle N°')
                     ->required(),
                 Select::make('culture_id')
                     ->label('Culture')
@@ -82,6 +82,14 @@ class FarmsRelationManager extends RelationManager
                                 'unique' => 'Ce nom existe déja'
                             ])
                     ])
+                    ->fillEditOptionActionFormUsing(function (Get $get) {
+
+                        return [
+                            'culture_id' => $get('culture_id'),
+                            'name' => $get('name'),
+                            'culture_setting_id' => $get('culture_setting_id'),
+                        ];
+                    })
                     ->editOptionForm([
                         Forms\Components\TextInput::make('name')
                             ->label('Paramètres de Culture')
@@ -110,6 +118,13 @@ class FarmsRelationManager extends RelationManager
                             ->options(fn(Get $get) => CultureSetting::all()->pluck('name', 'id'))
                             ->required()
                     ])
+                    ->fillEditOptionActionFormUsing(function (Get $get) {
+
+                        return [
+                            'name' => $get('name'),
+                            'culture_setting_id' => $get('culture_setting_id'),
+                        ];
+                    })
                     ->editOptionForm([
                         Forms\Components\TextInput::make('name')
                             ->label('Variété')

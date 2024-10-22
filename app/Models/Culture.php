@@ -9,6 +9,8 @@ class Culture extends Model
 {
     use HasFactory;
 
+
+    // TEST
     /**
      * The attributes that are mass assignable.
      *

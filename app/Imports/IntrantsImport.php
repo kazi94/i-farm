@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithProgressBar;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class Intrants2022Import implements WithMultipleSheets, WithProgressBar
+class IntrantsImport implements WithMultipleSheets, WithProgressBar
 {
 
     use Importable;

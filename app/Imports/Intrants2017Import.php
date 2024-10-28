@@ -44,7 +44,7 @@ class Intrants2017Import implements WithMultipleSheets, WithProgressBar
             'HERBICIDES (2)' => new FourthSheetImport(),
             'LIMATICIDES (2)' => new FifthSheetImport(),
             'ADJUVANTS (2)' => new SixthSheetImport(),
-            'STIMULANTS (2)' => new SevenSheetImport(),
+            'STIMULANTS_2' => new SevenSheetImport(),
             'RODENTICIDES (2)' => new EighttSheetImport(),
             'NEMATICIDES (2)' => new NineSheetImport(),
             'AUTRES (2)' => new TenSheetImport(),

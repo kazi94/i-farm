@@ -31,7 +31,7 @@ class SevenSheetImport implements ToCollection, WithHeadingRow, WithProgressBar
             $principesAc = strtolower($row['matiere_active']);
             $concentrations = strtolower($row['concentration']);
             $formulation = $row['formulation'];
-            $injectionMode = strtolower($row['mode_dapplication']);
+            $injectionMode = strtolower($row['mode_application']);
             $utilization = strtolower($row['utilisation']);
             $cultures = strtolower($row['cultures']);
             $dosesUnit = strtolower($row['doses_dutilisation']);

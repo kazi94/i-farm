@@ -33,8 +33,13 @@ class PreconisationsRelationManager extends RelationManager
     protected function getFormActions(): array
     {
         return [
-            ...parent::getFormActions(),
-            Action::make('tests')->action('createAndClose'),
+            $this->getCreateFormAction(),
+            Action::make('saveAnother')
+                ->label('Save & creassste another')
+                ->action('saveAnother')
+                ->keyBindings(['mod+shift+s'])
+                ->color('secondary'),
+            $this->getCancelFormAction(),
         ];
     }
 
@@ -197,7 +202,7 @@ class PreconisationsRelationManager extends RelationManager
                                         );
 
                                         // $set('unit_id', $intrantCulture ? $intrantCulture->unit_id : null);
-
+                            
                                         $set('dose', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name : 0);
                                         $set('dose_ar', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name_ar : 0);
                                     }
@@ -277,9 +282,13 @@ class PreconisationsRelationManager extends RelationManager
                         $data['farm_id'] = Farm::where('culture_id', $data['culture_id'])->get()->first()->id;
 
                         return $data;
-                    }),
+                    })
 
+                //  ->extraModalFooterActions(fn(Action $action): array => [
+                //     //$action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
+                // ]),
 
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

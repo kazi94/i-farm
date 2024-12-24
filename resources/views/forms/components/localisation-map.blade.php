@@ -16,7 +16,7 @@
         </x-filament::button>
     </div>
     <div x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} }"
-        x-init="await createMap" wire:ignore>
+        x-init="await createMap" >
 
 
 

@@ -9,140 +9,88 @@
     <style>
         body {
             font-family: sans-serif;
-            margin: 0;
             padding: 0;
+            margin: 0;
+            
+            width: 288px;
+            border: 1px solid black;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
 
         th {
             text-align: left;
         }
 
-        .header {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .customer-details {
-            margin-bottom: 20px;
-        }
-
-        .customer-details th,
-        .customer-details td {
-            padding-top: 5px;
-            padding-bottom: 5px;
-        }
-
-        .items-table {
-            border: 1px solid #ddd;
-        }
-
-        .items-table th {
-            background-color: #f2f2f2;
-        }
-
-        .row {
-            display: flex;
+                .preconistation {
+            padding: 0;
+            margin: 0;
+            width: 288px;
             text-align: center;
         }
 
-        .footer {
-            margin-top: 20px;
-            width: 100%;
-            height: 100px;
-            border-radius: 5px;
-            border: 1px solid black;
-            padding: 10px;
-        }
     </style>
 </head>
-
 <body>
 
-    <div class="header">
-        <h1>Préconisation #{{ $receipt['id'] }}</h1>
-        <p>{{ $receipt['date_preconisation']}}</p>
-    </div>
+    <div class="preconistation">
+        <span>**********************************</span>
 
-    <div class="customer-details">
-        <table>
-            <thead>
-                <th>
-                    <h3>Agriculteur</h3>
-                </th>
-                <th>
-                    <h3>Culture</h3>
-                </th>
-            </thead>
-
-            <tr>
-                <td>{{ $receipt['farmer']->fullname }}</td>
-                <td>{{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}</td>
-            </tr>
-
-            <tr>
-                <td>{{ $receipt['farmer']->wilaya->name }}</td>
-                <td><b>Superficie:</b>{{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="items-table">
-        <table style="overflow: hidden;">
-
-            <thead>
-                <tr class="header">
-                    <td>Depredateur</td>
-                    <td>Intrant</td>
-                    <td>Qty</td>
-                    <td>Dose</td>
-                    <td>Mode d'application</td>
-                    {{-- <td>Prix</td> --}}
-                </tr>
-            </thead>
-            <tbody>
-
-            @foreach ($receipt['preconisationItems'] as $item)
-               @foreach ($item['traitments'] as $intrantCulture )
+        <p style="margin-bottom: 0; margin-top:0">
+            <b>Préconisation #{{ $receipt['id'] }}</b> <br>
+            <br>
+            <b>
+                {{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}
+            </b>
+            <br>
+            <b>Superficie:</b>{{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}
+        </p>
+        <span>**********************************</span>
+        <br>
+        <b style="    display: block; font-size: small; text-align: left; margin-left: 43px; margin-bottom: 10px;">
+            Agriculteur: {{ $receipt['farmer']->fullname }} {{ $receipt['farmer']->wilaya->name }}
+        </b>
+        <div>
+            <table style="width: 100%; text-align: left; table-layout: fixed; margin-bottom: 2px; border-collapse: collapse; font-size: 14px;">
+                <thead>
                     <tr>
-                        @if ($loop->index == 0)
-                            <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif>
-                                <b>{{ $item['depredateur']['name'] }}</b>
-                            </td>
-                        @endif
-                        <td>{{ $intrantCulture['intrant']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['dose']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
-                        {{-- <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} DA</td> --}}
+                        <td style="word-wrap: break-word; border: 1px solid black;">Depredateur</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">Intrant</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">Qty</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">Dose</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">Application</td>
                     </tr>
-                @endforeach
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-    <div>
-        {{-- <p style="  font-size: 1.2em; "><b>Total:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} DA</p> --}}
-        <p style="  font-size: 1.2em; "><b>Ingénieur:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
-    </div>
-
+                </thead>
+                <tbody>
+                    @foreach ($receipt['preconisationItems'] as $item)
+                        @foreach ($item['traitments'] as $intrantCulture)
+                            <tr>
+                                @if ($loop->index == 0)
+                                    <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif style="word-wrap: break-word; border: 1px solid black;">
+                                        <b>{{ $item['depredateur']['name'] }}</b>
+                                    </td>
+                                @endif
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['intrant'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['quantity'] ?? '/' }} {{ $intrantCulture['unit']['name'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['dose'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['usage_mode'] ?? '/' }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     <div>
         <h3 style="margin-bottom: 0px">Note</h3>
         <div class="fotter">
 
             <p>{!! html_entity_decode($receipt['note'])!!}</p>
         </div>
+    </div>
+        <p>**********************************</p>
+        <b>{{ $receipt['date_preconisation']}}</b>
+        <br>
+        <span><b>Merci pour votre confiance !</b></span>
+        <br>
     </div>
 
 </body>

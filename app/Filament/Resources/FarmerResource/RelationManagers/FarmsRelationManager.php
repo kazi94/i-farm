@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources\FarmerResource\RelationManagers;
 
-use App\Models\Unit;
 use Filament\Forms;
 use App\Models\Farm;
-use Filament\Forms\Components\Section;
+use App\Models\Unit;
 use Filament\Tables;
 use App\Models\Culture;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\CultureSetting;
+use App\Models\CultureVariante;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -83,10 +84,10 @@ class FarmsRelationManager extends RelationManager
                             ])
                     ])
                     ->fillEditOptionActionFormUsing(function (Get $get) {
-
+                        debugbar()->info($get);
                         return [
                             'culture_id' => $get('culture_id'),
-                            'name' => $get('name'),
+                            'name' => CultureSetting::find($get('culture_setting_id'))->name,
                             'culture_setting_id' => $get('culture_setting_id'),
                         ];
                     })
@@ -121,7 +122,8 @@ class FarmsRelationManager extends RelationManager
                     ->fillEditOptionActionFormUsing(function (Get $get) {
 
                         return [
-                            'name' => $get('name'),
+                            'name' => CultureVariante::find($get('culture_variante_id'))->name,
+
                             'culture_setting_id' => $get('culture_setting_id'),
                         ];
                     })

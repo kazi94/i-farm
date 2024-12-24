@@ -30,8 +30,8 @@ class FarmerPreconisationPrintFrController extends Controller
             'preconisationItems' => $preconisation->preconisationItems->map(function ($item) use ($preconisation) {
                 return [
                     'depredateur' => [
-                        'id' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->id,
-                        'name' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->name,
+                        'id' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first() ? $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->id : null,
+                        'name' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first() ? $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->name : null,
                     ],
                     'traitments' => [
                         [
@@ -53,9 +53,9 @@ class FarmerPreconisationPrintFrController extends Controller
                 ];
             })->values()->toArray(),
         ];
-        // return view('users.farmers.pdfs.preconisation-fr', [
-        //     'receipt' => $rest,
-        // ]);
+        return view('users.farmers.pdfs.preconisation-fr', [
+            'receipt' => $preconisation,
+        ]);
         $pdf = PDF::loadView('users.farmers.pdfs.preconisation-fr', [
             'receipt' => $preconisation,
         ]);

@@ -122,17 +122,24 @@ class PreconisationResource extends Resource
                                         $intrants = [];
                                         if (!$get('../../culture_id') && $get('../../depredateur_id')) {
 
-                                            $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
-                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
+                                            $intrants = Intrant::join('culture_intrant', 'intrants.id', '=', 'culture_intrant.intrant_id')
+                                                ->leftJoin('units', 'culture_intrant.unit_id', '=', 'units.id') // Use LEFT JOIN
                                                 ->where('culture_intrant.depredateur_id', $get('../../depredateur_id'))
                                                 ->distinct()
-                                                ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id']);
-
+                                                ->get([
+                                                    'intrants.name_fr',
+                                                    'intrants.id',
+                                                    'culture_intrant.dose_min',
+                                                    'culture_intrant.dose_max',
+                                                    \DB::raw('units.name AS unitName'), // Will be NULL if no matching unit
+                                                    'culture_intrant.price',
+                                                    'culture_intrant.unit_id'
+                                                ]);
                                         }
 
                                         if ($get('../../culture_id') && !$get('../../depredateur_id')) {
                                             $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
-                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
+                                                ->leftJoin('units', 'culture_intrant.unit_id', 'units.id')
                                                 ->where('culture_intrant.culture_id', $get('../../culture_id'))
                                                 ->distinct()
                                                 ->get(['intrants.name_fr', 'intrants.id', 'culture_intrant.dose_min', 'culture_intrant.dose_max', \DB::raw('units.name AS unitName'), 'culture_intrant.price', 'culture_intrant.unit_id']);
@@ -140,7 +147,7 @@ class PreconisationResource extends Resource
 
                                         if ($get('../../culture_id') && $get('../../depredateur_id')) {
                                             $intrants = Intrant::join('culture_intrant', 'intrants.id', 'culture_intrant.intrant_id')
-                                                ->join('units', 'culture_intrant.unit_id', 'units.id')
+                                                ->leftJoin('units', 'culture_intrant.unit_id', 'units.id')
                                                 ->where('culture_intrant.culture_id', $get('../../culture_id'))
                                                 ->when(
                                                     $get('../../depredateur_id'),
@@ -157,8 +164,9 @@ class PreconisationResource extends Resource
                                             $intrants = Intrant::take(20)->get()->pluck('name_fr', 'id');
                                         } else {
                                             $intrants = collect($intrants)->map(function ($intrant) {
+                                                $posologieText = $intrant->unitName ? ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')' : '';
 
-                                                $description = $intrant->name_fr . ' (' . ($intrant->dose_min == $intrant->dose_max ? $intrant->dose_min : $intrant->dose_min . '-' . $intrant->dose_max) . ' ' . $intrant->unitName . ')';
+                                                $description = $intrant->name_fr . $posologieText;
 
                                                 return [
                                                     'id' => $intrant->id,
@@ -197,8 +205,11 @@ class PreconisationResource extends Resource
                                             $intrantCulture ? $intrantCulture->price : 0
                                         );
 
-                                        $set('dose', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name : 0);
-                                        $set('dose_ar', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $intrantCulture->unit->name_ar : 0);
+                                        $unitNameFr = isset($intrantCulture->unit) ? $intrantCulture->unit->name : null;
+                                        $unitNameAr = isset($intrantCulture->unit) ? $intrantCulture->unit->name_ar : null;
+
+                                        $set('dose', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $unitNameFr : 0);
+                                        $set('dose_ar', $intrantCulture ? ($intrantCulture->dose_min == $intrantCulture->dose_max ? $intrantCulture->dose_min : $intrantCulture->dose_min . '-' . $intrantCulture->dose_max) . ' ' . $unitNameAr : 0);
 
                                     }
 

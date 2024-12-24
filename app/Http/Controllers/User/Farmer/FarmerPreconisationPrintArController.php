@@ -19,6 +19,7 @@ class FarmerPreconisationPrintArController extends Controller
             'preconisationItems.unit',
             'preconisationItems.intrant.intrantsCultures.depredateur',
         ]);
+
         $preconisation = [
             'id' => $preconisation->id,
             'date_preconisation' => $preconisation->date_preconisation,
@@ -30,8 +31,8 @@ class FarmerPreconisationPrintArController extends Controller
             'preconisationItems' => $preconisation->preconisationItems->map(function ($item) use ($preconisation) {
                 return [
                     'depredateur' => [
-                        'id' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->id,
-                        'name' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->name,
+                        'id' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first() ? $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->id : null,
+                        'name' => $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first() ? $item->intrant->intrantsCultures->where('culture_id', $preconisation->culture_id)->first()->depredateur->name : null,
                     ],
                     'traitments' => [
                         [

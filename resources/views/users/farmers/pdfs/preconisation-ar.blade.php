@@ -3,161 +3,94 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>التوصية رقم {{ $receipt['id'] }}</title>
     <style>
         body {
             font-family: sans-serif;
-            margin: 0 auto;
             padding: 0;
-            direction: rtl;
-            text-align: right;
-            border-radius: 5px;
+            margin: 0;
+            width: 288px;
             border: 1px solid black;
+            direction: rtl;
         }
 
-        .main {
-            margin: 0 auto;
-            padding: 10px;
-
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
 
         th {
-            text-align: right;
+            text-align: left;
         }
 
-        .header {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .customer-details {
-            margin-bottom: 20px;
-        }
-
-        .customer-details th,
-        .customer-details td {
-            padding-top: 5px;
-            padding-bottom: 5px;
-        }
-
-        .items-table {
-            border: 1px solid #ddd;
-        }
-
-        .items-table th {
-            background-color: #f2f2f2;
-        }
-
-        .row {
-            display: flex;
+                .preconistation {
+            padding: 0;
+            margin: 0;
+            width: 288px;
             text-align: center;
         }
 
-        .footer {
-            margin-top: 20px;
-            width: 100%;
-            height: 100px;
-            border-radius: 5px;
-            border: 1px solid black;
-            padding: 10px;
-        }
     </style>
-    <script>
-        window.print();
-    </script>
 </head>
+<body>
 
-<body lang="ar">
+    <div class="preconistation">
+        <span>**********************************</span>
 
-    <div class="main">
-        <div class="header">
-            <h1>التوصية رقم {{ $receipt['id'] }}</h1>
-            <p>{{ $receipt['date_preconisation']}}</p>
-        </div>
-
-        <div class="customer-details">
-            <table>
+        <p style="margin-bottom: 0; margin-top:0">
+            <b>التوصية رقم {{ $receipt['id'] }}</b> <br>
+            <br>
+            <b>
+                {{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}
+            </b>
+            <br>
+            <b>المساحة:</b>{{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}
+        </p>
+        <span>**********************************</span>
+        <br>
+        <b style="    display: block; font-size: small; text-align: left; margin-left: 43px; margin-bottom: 10px;">
+            المنتج: {{ $receipt['farmer']->fullname }} {{ $receipt['farmer']->wilaya->name }}
+        </b>
+        <div>
+            <table style="width: 100%; text-align: left; table-layout: fixed; margin-bottom: 2px; border-collapse: collapse; font-size: 14px;">
                 <thead>
-                    <th>
-                        <h3>المنتج</h3>
-                    </th>
-                    <th>
-                        <h3>الحقل</h3>
-                    </th>
-                </thead>
-                <tr>
-                    <td>{{ $receipt['farmer']->fullname }}</td>
-                    <td>
-                        <b>المساحة: </b>
-                        {{ $receipt['farm']->area }} {{ $receipt['farm']->unit->name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td> {{ $receipt['farmer']->wilaya->name }}</td>
-                    <td><b>الحقل: </b>{{ $receipt['farm']->name }} - {{ $receipt['farm']->culture->name }}</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="items-table">
-            <table style="overflow: hidden;">
-
-                <tbody>
-                    <tr class="header">
-                        <td>المرض</td>
-                        <td>الدواء</td>
-                        <td>الكمية</td>
-                        <td>الجرعة</td>
-                        <td>طريقة الاستخدام</td>
-                        {{-- <td>السعر</td> --}}
-                    </tr>
-
-            @foreach ($receipt['preconisationItems'] as $item)
-               @foreach ($item['traitments'] as $intrantCulture )
                     <tr>
-                        @if ($loop->index == 0)
-                            <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif>
-                                <b>{{ $item['depredateur']['name'] }}</b>
-                            </td>
-                        @endif
-                        <td><b>{{ $intrantCulture['intrant']  ?? '/'}}</b></td>
-                        <td>{{ $intrantCulture['quantity']  ?? '/'}} {{ $intrantCulture['unit']['name_ar']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['dose_ar']  ?? '/'}}</td>
-                        <td>{{ $intrantCulture['usage_mode']  ?? '/'}}</td>
-                        {{-- <td>{{ number_format($intrantCulture['quantity'] * $intrantCulture['price'], 2, '.', ' ')  }} دج</td> --}}
+                                                <td style="word-wrap: break-word; border: 1px solid black;">المرض</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">الدواء</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">الكمية</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">الجرعة</td>
+                        <td style="word-wrap: break-word; border: 1px solid black;">طريقة الاستخدام</td>
+
                     </tr>
-                @endforeach
-            @endforeach
+                </thead>
+                <tbody>
+                    @foreach ($receipt['preconisationItems'] as $item)
+                        @foreach ($item['traitments'] as $intrantCulture)
+                            <tr>
+                                @if ($loop->index == 0)
+                                    <td @if ($loop->index == 0) rowspan="{{ count($item['traitments']) }}" @endif style="word-wrap: break-word; border: 1px solid black;">
+                                        <b>{{ $item['depredateur']['name'] }}</b>
+                                    </td>
+                                @endif
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['intrant'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['quantity'] ?? '/' }} {{ $intrantCulture['unit']['name_ar'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['dose_ar'] ?? '/' }}</td>
+                                <td style="word-wrap: break-word; border: 1px solid black;">{{ $intrantCulture['usage_mode'] ?? '/' }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
                 </tbody>
             </table>
         </div>
-        <div>
-            {{-- <p style="  font-size: 1.2em; "><b>المجموع:</b> {{number_format($receipt['total_amount'], 2, '.', ' ')}} دج --}}
-            </p>
-            <p style="  font-size: 1.2em; "><b>المهندس:</b> {{ ucfirst($receipt['createdBy']->name) }}</p>
-        </div>
+    <div>
+        <h3 style="margin-bottom: 0px">ملاحظات</h3>
+        <div class="fotter">
 
-        <div>
-            <h3 style="margin-bottom: 0px">ملاحظات</h3>
-            <div class="fotter">
-
-                <p>{!! html_entity_decode($receipt['note'])!!}</p>
-            </div>
+            <p>{!! html_entity_decode($receipt['note'])!!}</p>
         </div>
+    </div>
+        <p>**********************************</p>
+        <b>{{ $receipt['date_preconisation']}}</b>
+        <br>
+        <span><b>شكرا لكم على حسن الثقة بنا </b></span>
+        <br>
     </div>
 
 </body>
